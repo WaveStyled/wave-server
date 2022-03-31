@@ -4,7 +4,7 @@
 
   - Running the js file:
     - Command Line: `node file.js`
-    - Command Line: 'nodemon file.js'
+    - Command Line: `nodemon file.js`
       - can make changes without restarting possibly?
 ## Initial Database Thoughts
 
@@ -16,9 +16,62 @@
           - If we ever want to consider the color in rec algo it might be hard to just base it off the RGB number (unless we using it in ML then its a different story).
 
 Clothing types:
+
 Shirts --> "%S"
+- Tank Top                        : `TATS`
+- Button Up                      : `SBUS`
+- Tee                                 : `STES`
+- Polo Shirt                       : `SPOS`
+- Graphic                          : `SGRS`
+- Athletic                           : `SATS`
+- Long Sleeve Button Up : `LBUS`
+- Long Sleeve Polo           : `LPOS`
+- Long Sleeve Tee            : `LTES`
+- Long Sleeve Graphic.    : `LGRS`
+- Long Sleeve Athletics   : `LATS`
+
+Overtops --> "%T"
+- Sweatshirt                     : `SWST`
+- Hoodie                           : `HOOT`
+- Jacket                            : `JAKT`
+- Blazer                             : `BLZT`
+- Coats.                             : `COAT`
+
 Pants  --> "%P"
-Shoes  --> "%SO"
+- Skirt                                : `SKIP`
+- Yoga pants                     : `YOGP`
+- Cargo Pants                   : `CARP`
+- Jeans                              : `JEAP`
+- Sweatpants                    : `SWTP`
+- Track Pants                    : `TRAP`
+- Dress Pants                    : `DRSP`
+
+Shorts --> "%H"
+- Regular                           : `RGSH`
+- Swimshorts                    : `SWMH`
+- Sweatshorts                   : `SWSH`              
+
+Shoes  --> "%O"
+- Sneakers                        : `SNEO`
+- Runners                          : `RUNO`
+- Boots                              : `BOTO`
+- Dress                              : `DRSO`
+- Sandals                          : `SNDO`
+- Flip Flops                       : `FLIO`
+- Heels                             : `HELO`
+- Flats                               : `FLTO`
+
+Hats.   --> "%A"
+- Beanie                           : `BENA`
+- Baseball                        : `BASA`
+- Snapback                      : `SNPA`
+- Bucket                           : `BCKA`
+- Visor                              : `VIZA`
 
 Misc.  --> "%X"
+- Dress                             : `DREX`
+- Tux                                 : `TUXX`
+
+
+How Fits are represented : 6 - tuple
 
