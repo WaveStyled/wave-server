@@ -13,4 +13,12 @@
       - Encode type of clothing with 1 - 2 chars?
         - Need to make a dictionary when casting it back in python
       - Color encoding?
-          - If we ever want to consider the color in rec algo it might be hard to just base it off the RGB number(unless we using it in ML then its a different story).
+          - If we ever want to consider the color in rec algo it might be hard to just base it off the RGB number (unless we using it in ML then its a different story).
+
+Clothing types:
+Shirts --> "%S"
+Pants  --> "%P"
+Shoes  --> "%SO"
+
+Misc.  --> "%X"
+
