@@ -75,3 +75,28 @@ Misc.  --> "%X"
 
 How Fits are represented : 6 - tuple
 
+Occasion codes
+- Workout : `WK`
+- Formal    : `FF`
+- Semi Formal : `SF`
+- Casual : `CS`
+- BeachDay/Outdoors : `BD`
+- Comfy/Lazy : `LZ`
+
+Weather Codes
+- Cold : `C`
+- Hot  : `H`
+- Rainy : `R`
+- Sunny : `S`
+- Snowy : `N`
+- Typical : `T`
+
+
+- The Recommender creates fits from the wardrobe, feeds it to the ML model. The ML model wil predict whether the user will like the fit and feed it to the user. Seeing how the prediction fares with the user will give it more data so that it improves the model (validation). The Recommender can be random in the screening phase and then involve some basic calculations based on rating, etc. when it generates its fits; but, it doesn't need to be incredibly smart. 
+
+- ML model is a binary classifier (0 or 1)
+
+
+
+
+Each NN takes
