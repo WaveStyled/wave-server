@@ -1,6 +1,6 @@
-const post = require("pg").Pool;
+const conn = require("pg").Pool;
 
-const pool = new Pool ({
+const Conn = new conn({
   user: "postgres",
   password: "cse115",
   host: "localhost",
@@ -8,4 +8,4 @@ const pool = new Pool ({
   database: "WaveStyled"
 });
 
-module.exports = pool;
+module.exports = Conn;
