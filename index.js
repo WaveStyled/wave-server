@@ -29,11 +29,25 @@ app.post("/add",async(req,res) => {
   }
 });
 
+// get wardrobe
+
+app.get("/wardrobe",async(req,res) => {
+  try {
+    var query = "SELECT * FROM Wardrobe";
+    const wardrobe = await conn.query(query);
+    res.json(wardrobe.rows);
+  }
+  catch {
+
+  }
+});
+
+
 // get a recommendation
 
 // update an item
 
-// get wardrobe
+
 
 
 // Starts the server on the port given
