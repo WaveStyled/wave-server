@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/WaveStyled/wave-server/issues"
   },
-  "homepage": "https://github.com/WaveStyled/wave-server#readme"
+  "homepage": "https://github.com/WaveStyled/wave-server#readme",
+  "dependencies": {
+    "request": "^2.88.2",
+    "requests": "^0.3.0"
+  }
 }
