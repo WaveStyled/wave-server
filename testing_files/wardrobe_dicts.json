@@ -1,11 +1,46 @@
 {
-  "shirt_codes": ["TATS","SBUS","STES","SPOS","SGRS","SATS","LBUS","LPOS","LTES","LGRS","LATS"],
-  "overtop_codes": ["SWST","HOOT","JAKT","BLZT","COAT"],
-  "pant_codes": ["SKIP","YOGP","CARP","JEAP","SWTP","TRAP","DRSP"],
-  "short_codes": ["RGSH","SWMH","SWSH"],
-  "shoe_codes": ["SNEO","RUNO","BOTO","DRSO","SNDO","FLIO","HELO","FLTO"],
-  "hat_codes": ["BENA","BASA","SNPA","BCKA","VIZA"],
-  "misc_codes": ["DREX","TUXX"],
-  "occasion_codes": ["WK","FF","SF","CS","BD","LZ"],
-  "weather_codes": ["C","H","R","S","N","T"]
+  "shirts": {
+  	"shirt_codes": ["TATS","SBUS","STES","SPOS","SGRS","SATS","LBUS","LPOS","LTES","LGRS","LATS"],
+  	"shirt_names": ["Tank Top","Button Up","Tee","Polo","Graphic","Athletic", "Long Sleeve Button Up", "Long Sleeve Polo","Long Sleeve Tee","Long Sleeve Graphic","Long Sleeve Athletic"]
+  },
+  "overtops":{
+  	"overtop_codes": ["SWST","HOOT","JAKT","BLZT","COAT"],
+  	"overtop_names": ["Sweatshirt","Hoodie","Jacket","Blazer","Coat"]
+  },	
+  "pants":{
+
+  	"pant_codes": ["SKIP","YOGP","CARP","JEAP","SWTP","TRAP","DRSP"],
+  	"pant_names": ["Skirt","Yoga","Cargo","Jeans","Sweatpant","Track pant","Dress Pant"]
+
+  },
+  "shorts":{
+
+  	"short_codes": ["RGSH","SWMH","SWSH","ATHH"],
+  	"short_names": ["Regular","Swim","Seatshort","Athletic"]
+
+  },
+  "shoes": {
+  	"shoe_codes": ["SNEO","RUNO","BOTO","DRSO","SNDO","FLIO","HELO","FLTO"],
+  	"shoe_names": ["Sneaker","Running shoes","Boots","Dress","Sandals","Flip Flop","Heels","Flats"]
+
+  },
+  "hats": {
+  	"hat_codes": ["BENA","BASA","SNPA","BCKA","VIZA"],
+  	"hat_names": ["Beanie","Baseball","Snapback","Bucket","Visor"]
+  },
+  "misc":{
+
+  	 "misc_codes": ["DREX","TUXX"],
+  	 "misc_names": ["Dress","Tuxedo"]
+  },
+  "occasions":{
+  	 "occasion_codes": ["WK","FF","SF","CS","BD","LZ"],
+  	 "occasion_names": ["Workout","Formal","Semi-Formal","Casual","Outdoors","Relax"]
+  },
+  "weather":{
+  	 "weather_codes": ["C","H","R","S","N","T"],
+  	 "weather_names": ["Cold","Hot","Rainy","Sunny","Snowy","Average"]
+  },
+  
+ 
 }
