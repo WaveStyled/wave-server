@@ -30,13 +30,11 @@ app.post("/add",async(req,res) => {
 });
 
 // get wardrobe
-
 app.get("/wardrobe",async(req,res) => {
   try {
     var query = "SELECT * FROM Wardrobe";
     const wardrobe = await DBconn.query(query);
     res.json(wardrobe.rows);
-    console.log("Someone got here");
   }
   catch(err) {
     console.error(err.message);

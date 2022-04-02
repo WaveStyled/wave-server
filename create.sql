@@ -23,7 +23,7 @@ CREATE TABLE Wardrobe (
 );
 -- INSERT INTO Wardrobe (pieceID,R_COLOR,G_COLOR,B_COLOR,TYPE) VALUES (999,1,1,1,'oo');
 
-"""
+
 CREATE TABLE Outfits (
 	OUTFIT_ID INT PRIMARY KEY,
 	HAT INT,
@@ -49,4 +49,3 @@ CREATE TABLE Outfits (
  	WE_AVG_TMP BIT
 
 );
-"""
