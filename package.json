@@ -17,6 +17,9 @@
   },
   "homepage": "https://github.com/WaveStyled/wave-server#readme",
   "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.3",
+    "pg": "^8.7.3",
     "request": "^2.88.2",
     "requests": "^0.3.0"
   }

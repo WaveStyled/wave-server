@@ -5,7 +5,7 @@ const Conn = new conn({
   password: "cse115",
   host: "localhost",
   port: 5432,
-  database: "WaveStyled"
+  database: "wavestyled"
 });
 
 module.exports = Conn;
