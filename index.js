@@ -33,7 +33,7 @@ app.post("/add",async(req,res) => {
     res.json(add_newItem);
   
    const py_ping = {
-      "PK": data.PIECEID
+      "data": query_data
    };
 
 
@@ -46,6 +46,7 @@ app.post("/add",async(req,res) => {
 
 
   }
+  // move this u idiot - matt talking to matt
   catch(err) {
     console.error(err.message);
   }
