@@ -21,7 +21,7 @@ def post_add(piece_id,code,color,occasions,weather):
 			 'G_COLOR' : color[1],
 			 'B_COLOR': color[2],
 			 'TYPE': code,
-			 'PIECE_ID': piece_id,
+			 'PIECEID': piece_id,
 			 'OC_SEMI_FORMAL': occasions[0],
 			 'OC_FORMAL': occasions[1],
 			 'OC_CASUAL':occasions[2],
@@ -34,12 +34,12 @@ def post_add(piece_id,code,color,occasions,weather):
 			 'WE_SNOWY': weather[3],
 			 'WE_AVERAGE': weather[4]
 							}
-	r = requests.post(url,data=myobj)
+	r = requests.post(url,json=myobj)
 
 def gen_wardrobe(num_pieces):
 
 
-	for i in range(0,num_pieces,1):
+	for i in range(1,num_pieces,1):
 		piece_id = i
 		piece_type = randint(0,6)
 		code = codes[piece_type][randint(0,len(codes[piece_type])-1)]
