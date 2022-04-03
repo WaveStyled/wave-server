@@ -31,12 +31,7 @@ app.post("/add",async(req,res) => {
     var query_data = [data.PIECEID, data.R_COLOR, data.G_COLOR, data.B_COLOR, data.TYPE, data.OC_FORMAL,data.OC_SEMI_FORMAL, data.OC_CASUAL, data.OC_WORKOUT, data.OC_OUTDOORS, data.OC_COMFY, data.WE_COLD, data.WE_HOT, data.WE_RAINY, data.WE_SNOWY, data.WE_AVG_TMP];
     const add_newItem = await DBconn.query(query,query_data);
     res.json(add_newItem);
-    // python program should be pinged here
-   //request.post({url:python_server_dest,formData: py_ping}, function optionalCallback(err,httpResponse,body){
-   //   if(err){
-   //     console.error(err.message);
-   //   }
-  //  });
+  
    const py_ping = {
       "PK": data.PIECEID
    };

@@ -1,3 +1,6 @@
+DROP TABLE Wardrobe;
+DROP TABLE Outfits;
+
 
 CREATE TABLE Wardrobe (
 
