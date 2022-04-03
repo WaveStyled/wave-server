@@ -37,11 +37,11 @@ app.post("/add",async(req,res) => {
    };
 
 
-  axios.put("http://localhost:5001/ping", py_ping).then((res) =>{
-    console.log(res.data);
-  }).catch((err) => {
-    console.log(err);
-  });
+    axios.put("http://localhost:5001/ping", py_ping).then((res) =>{
+      console.log(res.data);
+    }).catch((err) => {
+      console.log(err);
+    });
 
 
 
@@ -68,7 +68,32 @@ app.get("/wardrobe",async(req,res) => {
 
 // update an item
 
+//DELETE item from wardrobe
+app.delete("/delete/:id",async(req,res) => {
+  const id = req.params.id;
+  try {
+    const del = `DELETE FROM Wardrobe WHERE PIECEID = $1 RETURNING *`;
+    const query = {
+      text: del,
+      values: [id],
+    };
+    const deletedItem = await DBconn.query(query);
+    res.json(deletedItem);
 
+    const py_ping = {
+      "PK": data.PIECEID
+   };
+    axios.put("http://localhost:5001/ping", py_ping).then((res) => {
+      console.log(res.data);
+    }).catch((err) => {
+      console.log(err);
+    });
+  }
+
+  catch(err) {
+    console.error(err.message);
+  }
+});
 
 
 // Starts the server on the port given
