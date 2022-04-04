@@ -2,22 +2,20 @@
 var express = require('express');
 var app = express();
 var cors = require("cors");
-var request = require("request")
 const axios = require('axios');
-
+const {spawn} = require('child_process')
+var python;
 
 // File Imports
 const DBconn = require("./connectDB");
 
 // Main Vars
 var port = 5000;
-var python_server_dest = "http://localhost:5001/ping";
 
 
 // Allow ability to get data from client in json form
 app.use(cors());
 app.use(express.json());
-
 
 // Paths
 
@@ -43,8 +41,6 @@ app.post("/add",async(req,res) => {
       console.log(err);
     });
 
-
-
   }
   // move this u idiot - matt talking to matt
   catch(err) {
@@ -54,6 +50,7 @@ app.post("/add",async(req,res) => {
 
 // get wardrobe
 app.get("/wardrobe",async(req,res) => {
+  await DBconn.connect()
   try {
     var query = "SELECT * FROM Wardrobe";
     const wardrobe = await DBconn.query(query);
@@ -97,7 +94,66 @@ app.delete("/delete/:id",async(req,res) => {
 });
 
 
+
+function createTable() {  // database connection stuff
+  try {
+    DBconn.connect();   
+    DBconn.query('DROP TABLE Wardrobe');   // sends querie
+    console.log("Wardrobe Table Dropped");
+    
+  } catch (error) {
+    try {  // I ALSO JUST REALIZED THAT THIS TABLE IS OUTDATED !!!!
+      const query = "CREATE TABLE Wardrobe ( \
+        pieceID INT PRIMARY KEY, \
+        R_COLOR INT, \
+        G_COLOR INT, \
+        B_COLOR INT, \
+        TYPE VARCHAR(4), \
+        RECENT_DATE_WORN DATE, \
+        TIMES_WORN INT, \
+        RATING NUMERIC(3,2) DEFAULT 0.50, \
+        OC_FORMAL INT, \
+        OC_SEMI_FORMAL INT, \
+        OC_CASUAL INT, \
+        OC_WORKOUT INT, \
+        OC_OUTDOORS INT, \
+        OC_COMFY INT, \
+        WE_COLD INT, \
+        WE_HOT INT, \
+        WE_RAINY INT, \
+        WE_SNOWY INT, \
+        WE_AVG_TMP INT)";
+      DBconn.query(query);   // sends queries
+      console.log("Wardrobe Table Created\n");
+    } catch (error){
+      return false;
+    }
+  } 
+  return true;
+}; 
+
+
 // Starts the server on the port given
 app.listen(port,() => {
   console.log("Server has started on port: " + port);
-})
+  
+  // for testing purposes
+  // console.log("Resetting the database...");
+  // createTable();
+  ////
+
+  // console.log("Initializing the Python Files: \n");
+  // python = spawn('python3', ['../wave-recommender/Link.py']);
+  // console.log("Link.py Running...\n");
+
+});
+
+// Facilitates app shut down (CRTL + C)
+process.on('SIGINT', function() {
+  console.log( "\nShutting Main Server Down and Closing Database Connections...");
+  console.log('Http server closed.');
+  DBconn.end();
+  console.log("App Successfully Shut Down");
+  process.exit(0);
+  // some other closing procedures go here
+});
