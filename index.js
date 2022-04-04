@@ -93,7 +93,10 @@ app.delete("/delete/:id",async(req,res) => {
   }
 });
 
-var query = "CREATE TABLE wardrobe ( \
+
+// Resets the wardrobe table
+const dropcreateTable = async()=> {
+  var query = "CREATE TABLE wardrobe ( \
         pieceID INT PRIMARY KEY, \
         R_COLOR INT, \
         G_COLOR INT, \
@@ -102,24 +105,20 @@ var query = "CREATE TABLE wardrobe ( \
         RECENT_DATE_WORN DATE, \
         TIMES_WORN INT, \
         RATING NUMERIC(3,2) DEFAULT 0.50, \
-        OC_FORMAL INT, \
-        OC_SEMI_FORMAL INT, \
-        OC_CASUAL INT, \
-        OC_WORKOUT INT, \
-        OC_OUTDOORS INT, \
-        OC_COMFY INT, \
-        WE_COLD INT, \
-        WE_HOT INT, \
-        WE_RAINY INT, \
-        WE_SNOWY INT, \
-        WE_AVG_TMP INT)";
-
-// Resets the wardrobe table
-const dropcreateTable = async()=> {
+        OC_FORMAL BOOLEAN, \
+        OC_SEMI_FORMAL BOOLEAN, \
+        OC_CASUAL BOOLEAN, \
+        OC_WORKOUT BOOLEAN, \
+        OC_OUTDOORS BOOLEAN, \
+        OC_COMFY BOOLEAN, \
+        WE_COLD BOOLEAN, \
+        WE_HOT BOOLEAN, \
+        WE_RAINY BOOLEAN, \
+        WE_SNOWY BOOLEAN, \
+        WE_AVG_TMP BOOLEAN)";
   await DBconn.query("DROP TABLE IF EXISTS wardrobe");
   await DBconn.query(query);
   return true;
-
 }
 
 
@@ -147,6 +146,8 @@ process.on('SIGINT', function() {
   console.log('Http server closed.');
   DBconn.end();
   console.log("App Successfully Shut Down");
+  axios.put("http://localhost:5001/kill");
+
   process.exit(0);
   // some other closing procedures go here
 });
