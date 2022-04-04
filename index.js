@@ -31,11 +31,11 @@ app.post("/add",async(req,res) => {
     res.json(add_newItem);
   
    const py_ping = {
-      "data": query_data
+      "data": query_data,
    };
 
-
-    axios.put("http://localhost:5001/ping", py_ping).then((res) =>{
+   // to specify a specific userid http://localhost:5001/ping?userid=XXXX
+    axios.put("http://localhost:5001/ping?userid=999", py_ping).then((res) =>{
       console.log(res.data);
     }).catch((err) => {
       console.log(err);
