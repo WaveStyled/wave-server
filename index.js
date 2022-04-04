@@ -3,7 +3,7 @@ var express = require('express');
 var app = express();
 var cors = require("cors");
 const axios = require('axios');
-const {spawn} = require('child_process')
+// const {spawn} = require('child_process')
 var python;
 
 // File Imports
@@ -50,7 +50,6 @@ app.post("/add",async(req,res) => {
 
 // get wardrobe
 app.get("/wardrobe",async(req,res) => {
-  await DBconn.connect()
   try {
     var query = "SELECT * FROM Wardrobe";
     const wardrobe = await DBconn.query(query);
@@ -128,14 +127,14 @@ app.listen(port,() => {
   console.log("Server has started on port: " + port);
   
   // for testing purposes
-  console.log("Resetting the database...");
-  dropcreateTable().then((result)=>{
-    if(result){
-      console.log("Database has been reset");
-    }
-  });
+  // console.log("Resetting the database...");
+  // dropcreateTable().then((result)=>{
+  //  if(result){
+  //    console.log("Database has been reset");
+  //  }
+  //});
   // console.log("Initializing the Python Files: \n");
-  python = spawn('python3', ['../wave-recommender/Link.py']);
+  /// python = spawn('python3', ['../wave-recommender/Link.py']);
   // console.log("Link.py Running...\n");
 
 });
