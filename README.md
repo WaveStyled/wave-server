@@ -1,4 +1,14 @@
 # wave-server
+## How to execute the Service (as of now)
+1. Open 3 terminals
+	1. One in `wave-server`
+	2. One in `wave-recommender`
+	3. One in `wave-server/testing_files`
+2. In (1), run `node index.js` (after installing the necessary dependencies using `npm -i <pkgname>`)
+3. In (2) run `python3 Link.py` (after installing the necessary dependencies  using `python3 pip install <pkgnanme>`) -- NOTE: the installation lines are included in the beginning of the respective python file
+4. In (3) run `python3 random_wardrobe_generation.py` and observe the outputs on the other terminals
+5. Now you can use the `requests` module in Python (or you can use Node) to call HTTP endpoint requests to observe the process' behavior
+
 
 ## Initial Node Thoughts
 
@@ -102,8 +112,3 @@ Weather Codes
 - The Recommender creates fits from the wardrobe, feeds it to the ML model. The ML model wil predict whether the user will like the fit and feed it to the user. Seeing how the prediction fares with the user will give it more data so that it improves the model (validation). The Recommender can be random in the screening phase and then involve some basic calculations based on rating, etc. when it generates its fits; but, it doesn't need to be incredibly smart.
 
 - ML model is a binary classifier (0 or 1)
-
-
-
-
-Each NN takes
