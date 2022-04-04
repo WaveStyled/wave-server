@@ -93,17 +93,7 @@ app.delete("/delete/:id",async(req,res) => {
   }
 });
 
-
-
-function createTable() {  // database connection stuff
-  try {
-    DBconn.connect();   
-    DBconn.query('DROP TABLE Wardrobe');   // sends querie
-    console.log("Wardrobe Table Dropped");
-    
-  } catch (error) {
-    try {  // I ALSO JUST REALIZED THAT THIS TABLE IS OUTDATED !!!!
-      const query = "CREATE TABLE Wardrobe ( \
+var query = "CREATE TABLE wardrobe ( \
         pieceID INT PRIMARY KEY, \
         R_COLOR INT, \
         G_COLOR INT, \
@@ -123,14 +113,15 @@ function createTable() {  // database connection stuff
         WE_RAINY INT, \
         WE_SNOWY INT, \
         WE_AVG_TMP INT)";
-      DBconn.query(query);   // sends queries
-      console.log("Wardrobe Table Created\n");
-    } catch (error){
-      return false;
-    }
-  } 
+
+// Resets the wardrobe table
+const dropcreateTable = async()=> {
+  await DBconn.query("DROP TABLE IF EXISTS wardrobe");
+  await DBconn.query(query);
   return true;
-}; 
+
+}
+
 
 
 // Starts the server on the port given
@@ -138,12 +129,14 @@ app.listen(port,() => {
   console.log("Server has started on port: " + port);
   
   // for testing purposes
-  // console.log("Resetting the database...");
-  // createTable();
-  ////
-
+  console.log("Resetting the database...");
+  dropcreateTable().then((result)=>{
+    if(result){
+      console.log("Database has been reset");
+    }
+  });
   // console.log("Initializing the Python Files: \n");
-  // python = spawn('python3', ['../wave-recommender/Link.py']);
+  python = spawn('python3', ['../wave-recommender/Link.py']);
   // console.log("Link.py Running...\n");
 
 });
