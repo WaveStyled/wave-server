@@ -121,8 +121,7 @@ const dropcreateTable = async()=> {
 }
 
 const shutdownPython = async() => {
-  console.log("here");
-  await axios.put("http://localhost:5001/shutdown");
+  await axios.put("http://localhost:5001/end");
   return true;
 }
 
@@ -132,7 +131,7 @@ var server = app.listen(port,() => {
   
   // for testing purposes
   console.log("Resetting the database...");
-   dropcreateTable().then((result)=>{
+  dropcreateTable().then((result)=>{
     if(result){
       console.log("Database has been reset");
     }
