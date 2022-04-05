@@ -47,4 +47,4 @@ def gen_wardrobe(num_pieces):
 		occasions = [randint(0,1),randint(0,1),randint(0,1),randint(0,1),randint(0,1),randint(0,1)]
 		weather = [randint(0,1),randint(0,1),randint(0,1),randint(0,1),randint(0,1)]
 		post_add(piece_id,code,color,occasions,weather)
-gen_wardrobe(100)
+gen_wardrobe(2)

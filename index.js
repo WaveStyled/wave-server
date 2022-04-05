@@ -4,7 +4,7 @@ var app = express();
 var cors = require("cors");
 const axios = require('axios');
 // const {spawn} = require('child_process')
-var python;
+
 
 // File Imports
 const DBconn = require("./connectDB");
@@ -127,12 +127,12 @@ app.listen(port,() => {
   console.log("Server has started on port: " + port);
   
   // for testing purposes
-  // console.log("Resetting the database...");
-  // dropcreateTable().then((result)=>{
-  //  if(result){
-  //    console.log("Database has been reset");
-  //  }
-  //});
+  console.log("Resetting the database...");
+   dropcreateTable().then((result)=>{
+    if(result){
+      console.log("Database has been reset");
+    }
+  });
   // console.log("Initializing the Python Files: \n");
   /// python = spawn('python3', ['../wave-recommender/Link.py']);
   // console.log("Link.py Running...\n");
