@@ -35,7 +35,7 @@ app.post("/add",async(req,res) => {
    };
 
    // to specify a specific userid http://localhost:5001/ping?userid=XXXX
-    axios.put("http://localhost:5001/ping?userid=999", py_ping).then((res) =>{
+    axios.put("http://localhost:5001/add?userid=999", py_ping).then((res) =>{
       console.log(res.data);
     }).catch((err) => {
       console.log(err);
@@ -80,7 +80,7 @@ app.delete("/delete/:id",async(req,res) => {
     const py_ping = {
       "PK": data.PIECEID
    };
-    axios.put("http://localhost:5001/ping", py_ping).then((res) => {
+    axios.put("http://localhost:5001/delete?userid=999", py_ping).then((res) => {
       console.log(res.data);
     }).catch((err) => {
       console.log(err);
@@ -120,10 +120,14 @@ const dropcreateTable = async()=> {
   return true;
 }
 
-
+const shutdownPython = async() => {
+  console.log("here");
+  await axios.put("http://localhost:5001/shutdown");
+  return true;
+}
 
 // Starts the server on the port given
-app.listen(port,() => {
+var server = app.listen(port,() => {
   console.log("Server has started on port: " + port);
   
   // for testing purposes
@@ -131,6 +135,9 @@ app.listen(port,() => {
    dropcreateTable().then((result)=>{
     if(result){
       console.log("Database has been reset");
+    }
+    else{
+      console.log(result);
     }
   });
   // console.log("Initializing the Python Files: \n");
@@ -145,8 +152,13 @@ process.on('SIGINT', function() {
   console.log('Http server closed.');
   DBconn.end();
   console.log("App Successfully Shut Down");
-  axios.put("http://localhost:5001/kill");
-
-  process.exit(0);
+  shutdownPython().then((result)=>{
+    if(result){
+      console.log("Python Server Succesfully Shutdown");
+    }
+  });
+  
+  server.close();
+  //process.exit(0);
   // some other closing procedures go here
 });
