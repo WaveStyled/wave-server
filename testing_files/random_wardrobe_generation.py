@@ -1,3 +1,10 @@
+""""
+
+THIS IS NOW DEPRECATED AS WE NO LONGER ARE TAKING RGB, COLOR IS NOW A STRING
+
+"""
+
+
 """
 
  - open json file, get all the codes

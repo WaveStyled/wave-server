@@ -25,8 +25,8 @@ app.post("/add",async(req,res) => {
   try {
     var data = req.body;
    
-    var query = "INSERT INTO wardrobe (PIECEID, R_COLOR,G_COLOR,B_COLOR,TYPE,OC_FORMAL,OC_SEMI_FORMAL,OC_CASUAL,OC_WORKOUT,OC_OUTDOORS,OC_COMFY, WE_COLD,WE_HOT,WE_RAINY,WE_SNOWY,WE_AVG_TMP) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)";
-    var query_data = [data.PIECEID, data.R_COLOR, data.G_COLOR, data.B_COLOR, data.TYPE, data.OC_FORMAL,data.OC_SEMI_FORMAL, data.OC_CASUAL, data.OC_WORKOUT, data.OC_OUTDOORS, data.OC_COMFY, data.WE_COLD, data.WE_HOT, data.WE_RAINY, data.WE_SNOWY, data.WE_AVG_TMP];
+    var query = "INSERT INTO wardrobe (PIECEID, COLOR,TYPE,OC_FORMAL,OC_SEMI_FORMAL,OC_CASUAL,OC_WORKOUT,OC_OUTDOORS,OC_COMFY, WE_COLD,WE_HOT,WE_RAINY,WE_SNOWY,WE_AVG_TMP) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)";
+    var query_data = [data.PIECEID, data.COLOR, data.TYPE, data.OC_FORMAL,data.OC_SEMI_FORMAL, data.OC_CASUAL, data.OC_WORKOUT, data.OC_OUTDOORS, data.OC_COMFY, data.WE_COLD, data.WE_HOT, data.WE_RAINY, data.WE_SNOWY, data.WE_AVG_TMP];
     const add_newItem = await DBconn.query(query,query_data);
     res.json(add_newItem);
   
@@ -35,11 +35,11 @@ app.post("/add",async(req,res) => {
    };
 
    // to specify a specific userid http://localhost:5001/ping?userid=XXXX
-    axios.put("http://localhost:5001/add?userid=999", py_ping).then((res) =>{
-      console.log(res.data);
-    }).catch((err) => {
-      console.log(err);
-    });
+  //  axios.put("http://localhost:5001/add?userid=999", py_ping).then((res) =>{
+  //    console.log(res.data);
+  //  }).catch((err) => {
+  //    console.log(err);
+  //  });
 
   }
   // move this u idiot - matt talking to matt
@@ -97,10 +97,8 @@ app.delete("/delete/:id",async(req,res) => {
 const dropcreateTable = async()=> {
   var query = "CREATE TABLE wardrobe ( \
         pieceID INT PRIMARY KEY, \
-        R_COLOR INT, \
-        G_COLOR INT, \
-        B_COLOR INT, \
-        TYPE VARCHAR(4), \
+        COLOR VARCHAR(12), \
+        TYPE VARCHAR(5), \
         RECENT_DATE_WORN DATE, \
         TIMES_WORN INT, \
         RATING NUMERIC(3,2) DEFAULT 0.50, \
