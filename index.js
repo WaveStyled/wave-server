@@ -25,8 +25,11 @@ app.post("/add",async(req,res) => {
   try {
     var data = req.body;
    
-    var query = "INSERT INTO wardrobe (PIECEID, COLOR,TYPE,OC_FORMAL,OC_SEMI_FORMAL,OC_CASUAL,OC_WORKOUT,OC_OUTDOORS,OC_COMFY, WE_COLD,WE_HOT,WE_RAINY,WE_SNOWY,WE_AVG_TMP) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)";
-    var query_data = [data.PIECEID, data.COLOR, data.TYPE, data.OC_FORMAL,data.OC_SEMI_FORMAL, data.OC_CASUAL, data.OC_WORKOUT, data.OC_OUTDOORS, data.OC_COMFY, data.WE_COLD, data.WE_HOT, data.WE_RAINY, data.WE_SNOWY, data.WE_AVG_TMP];
+    var query = "INSERT INTO wardrobe VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17, $18)";
+    var query_data = [data.PIECEID, data.COLOR, data.TYPE, null, data.TIMES_WORN, data.RATING, 
+                      data.OC_FORMAL, data.OC_SEMI_FORMAL, data.OC_CASUAL, data.OC_WORKOUT, data.OC_OUTDOORS, 
+                      data.OC_COMFY, data.WE_COLD, data.WE_HOT, data.WE_RAINY, data.WE_SNOWY, data.WE_TYPICAL,
+                      data.DIRTY];
     const add_newItem = await DBconn.query(query,query_data);
     res.json(add_newItem);
   
@@ -35,11 +38,11 @@ app.post("/add",async(req,res) => {
    };
 
    // to specify a specific userid http://localhost:5001/ping?userid=XXXX
-  //  axios.put("http://localhost:5001/add?userid=999", py_ping).then((res) =>{
-  //    console.log(res.data);
-  //  }).catch((err) => {
-  //    console.log(err);
-  //  });
+  axios.put("http://localhost:5001/add?userid=999", py_ping).then((res) =>{
+     console.log(res.data);
+  }).catch((err) => {
+      console.log(err);
+  });
 
   }
   // move this u idiot - matt talking to matt
@@ -112,7 +115,8 @@ const dropcreateTable = async()=> {
         WE_HOT BOOLEAN, \
         WE_RAINY BOOLEAN, \
         WE_SNOWY BOOLEAN, \
-        WE_AVG_TMP BOOLEAN)";
+        WE_AVG_TMP BOOLEAN, \
+        DIRTY BOOLEAN)";
   await DBconn.query("DROP TABLE IF EXISTS wardrobe");
   await DBconn.query(query);
   return true;
@@ -150,11 +154,11 @@ process.on('SIGINT', function() {
   DBconn.end();
   console.log("App Successfully Shut Down");
   
-  shutdownPython().then((result)=>{
-    if(result){
-      console.log("Python Server Succesfully Shutdown");
-    }
-  });
+ // shutdownPython().then((result)=>{
+ //   if(result){
+ //     console.log("Python Server Succesfully Shutdown");
+ //   }
+ // });
   
   server.close();
   //process.exit(0);
