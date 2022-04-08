@@ -121,7 +121,7 @@ const dropcreateTable = async()=> {
 }
 
 const shutdownPython = async() => {
-  await axios.put("http://localhost:5001/end");
+  await axios.delete("http://localhost:5001/end");
   return true;
 }
 
@@ -151,6 +151,7 @@ process.on('SIGINT', function() {
   console.log('Http server closed.');
   DBconn.end();
   console.log("App Successfully Shut Down");
+  
   shutdownPython().then((result)=>{
     if(result){
       console.log("Python Server Succesfully Shutdown");

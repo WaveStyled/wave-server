@@ -46,13 +46,16 @@ Shirts --> "%S"
 - Long Sleeve Tee            : `LTES`
 - Long Sleeve Graphic.    : `LGRS`
 - Long Sleeve Athletics   : `LATS`
+- Flannel                           : `FLAS`
 
 Overtops --> "%T"
 - Sweatshirt                     : `SWST`
 - Hoodie                           : `HOOT`
 - Jacket                            : `JAKT`
 - Blazer                             : `BLZT`
-- Coats.                             : `COAT`
+- Coats                              : `COAT`
+- Vest                                : `VEST`
+- Puffer Jacket                 : `PUFT`
 
 Pants  --> "%P"
 - Skirt                                : `SKIP`
@@ -62,11 +65,13 @@ Pants  --> "%P"
 - Sweatpants                    : `SWTP`
 - Track Pants                    : `TRAP`
 - Dress Pants                    : `DRSP`
+- Pajamas                          : `PJMT`
 
 Shorts --> "%H"
 - Regular                           : `RGSH`
 - Swimshorts                    : `SWMH`
-- Sweatshorts                   : `SWSH`              
+- Sweatshorts                   : `SWSH`  
+- Athletic Shorts               : `ATSH`            
 
 Shoes  --> "%O"
 - Sneakers                        : `SNEO`
@@ -84,6 +89,7 @@ Hats.   --> "%A"
 - Snapback                      : `SNPA`
 - Bucket                           : `BCKA`
 - Visor                              : `VIZA`
+- Regular Hat.                  : `HATA`
 
 Misc.  --> "%X"
 - Dress                             : `DREX`
