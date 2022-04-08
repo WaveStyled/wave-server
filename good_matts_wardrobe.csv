@@ -106,7 +106,7 @@ pieceid,type,color,formal,semi-formal,casual,workout,outdoors,comfy,cold,hot,rai
 105,SWST,tiedye,0,1,1,0,0,1,1,0,1,1,1
 106,SWST,dark_grey,0,0,1,0,1,1,1,0,1,0,1
 107,HOOT,grey,0,0,1,1,1,0,1,1,1,1,1
-108,SWSH,multi,0,0,1,1,1,0,1,1,0,0,1
+108,ATSH,multi,0,0,1,1,1,0,1,1,0,0,1
 109,ATSH,pink,0,0,1,1,1,0,1,1,0,0,1
 110,PJMT,blue,0,0,0,0,0,1,1,0,1,1,1
 111,PJMT,red,0,0,0,0,0,1,1,0,1,1,1
