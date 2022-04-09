@@ -2,7 +2,8 @@ import requests
 from random import randint
 import pandas as pd 
 import itertools
-data = pd.read_csv('manual_wardrobe_matt.csv') 
+from PIL import Image
+data = pd.read_csv('../good_matts_wardrobe.csv') 
 url = "http://localhost:5000/add"
 
 
@@ -47,7 +48,7 @@ def gen_random(occasion,weather):
 	bot = ""
 	hat = ""
 	fit = [0,0,0,0,0,0,0]
-	if weather == "hot":
+	if (weather == "hot"):
 		hat_chance = randint(1,3)
 		
 		if(hat_chance == 1):
@@ -60,7 +61,7 @@ def gen_random(occasion,weather):
 		shoes = gen(occasion,weather,"O")
 		fit[5] = shoes
 		return fit
-	if weather == "cold":
+	if (weather == "cold"):
 		hat_chance = randint(1,3)
 		if(hat_chance == 1):
 			hat = gen(occasion,weather,"A")
@@ -76,7 +77,7 @@ def gen_random(occasion,weather):
 		shoes = gen(occasion,weather,"O")
 		fit[5] = shoes
 		return fit
-	if weather == "rainy":
+	if (weather == "rainy"):
 		
 		hat_chance = randint(1,2)
 		if(hat_chance == 1):
@@ -98,7 +99,7 @@ def gen_random(occasion,weather):
 		jacket = gen(occasion, weather,"C")
 		fit[3] = jacket
 		return fit
-	if weather == "typical":
+	if (weather == "typical"):
 		shirt_or_sweat = randint(1,2)
 		if(shirt_or_sweat == 1):
 			# shirt
@@ -124,7 +125,7 @@ def gen_random(occasion,weather):
 		shoes = gen(occasion,weather,"O")
 		fit[5] = shoes
 		return fit
-	if weather == "snowy":
+	if (weather == "snowy"):
 		hat_chance = randint(1,2)
 		if(hat_chance == 1):
 			hat = gen(occasion,weather,"A")
@@ -144,19 +145,33 @@ def generate_permutations(num_fits):
 	occasions = ["formal","semi-formal","casual","workout","outdoors","comfy"]
 	weather = ["hot","cold","rainy","snowy","typical"]
 	fits = []
+	oc_we = []
 	for x in range(0,num_fits,1):
-		fit = gen_random(occasions[randint(0,len(occasions)-1)],weather[randint(0,len(weather)-1)])
+		oc = occasions[randint(0,len(occasions)-1)]
+		we = weather[randint(0,len(weather)-1)]
+		fit = gen_random(oc,we)
 		
 		if -1 not in fit:
 			fits.append(fit)
-		else:
-			x = x - 1
-	fits.sort()
-	list(fits for fits,_ in itertools.groupby(fits))
-	return fits
+			oc_we.append([oc,we])
+	
+	#fits.sort()
+	#list(fits for fits,_ in itertools.groupby(fits))
+	return [fits,oc_we]
+
+
+def display_fit(fit,oc_we):
+	print(fit)
+	print(oc_we[0],oc_we[1])
+	for x in fit:
+		if x!= 0:
+			im = Image.open("../../my_wardrobe_pics/wardrobe/jpgs/"+str(x)+".jpeg")
+			im.show() 
 
 
 
-
-print(len(generate_permutations(1000)))
+random_fits = generate_permutations(100)
+#print(len(random_fits[0]))
+#print(len(random_fits[1]))
+display_fit(random_fits[0][20],random_fits[1][20])
 #print(len(generate_permutations(10000)))
