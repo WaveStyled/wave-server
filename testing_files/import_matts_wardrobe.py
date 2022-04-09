@@ -28,8 +28,7 @@ for row in data.itertuples(index=False):
 			 'WE_TYPICAL': row.typical,
 			 'RECENT_DATE_WORN' : d3,
 			 'TIMES_WORN': 0,
-			 'RATING':     0.5,
-			 'DIRTY': 0  
+			 'RATING':     0.5,  
 							}
     r = requests.post(url,json=myobj)
 

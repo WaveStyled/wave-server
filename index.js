@@ -25,7 +25,7 @@ app.post("/add",async(req,res) => {
   try {
     var data = req.body;
    
-    var query = "INSERT INTO wardrobe VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17, $18)";
+    var query = "INSERT INTO wardrobe VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)";
     var query_data = [data.PIECEID, data.COLOR, data.TYPE, null, data.TIMES_WORN, data.RATING, 
                       data.OC_FORMAL, data.OC_SEMI_FORMAL, data.OC_CASUAL, data.OC_WORKOUT, data.OC_OUTDOORS, 
                       data.OC_COMFY, data.WE_COLD, data.WE_HOT, data.WE_RAINY, data.WE_SNOWY, data.WE_TYPICAL,
