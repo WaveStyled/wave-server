@@ -154,3 +154,4 @@ pieceid,type,color,formal,semi_formal,casual,workout,outdoors,comfy,cold,hot,rai
 153,RUNO,grey,0,0,0,1,1,0,1,1,1,1,1
 154,FLIO,black,0,0,1,0,1,1,0,1,0,0,1
 155,SNEO,white,1,1,1,0,1,0,1,1,1,0,1
+156,LGRS,beige,0,1,1,0,1,1,1,1,1,1,1
