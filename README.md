@@ -51,11 +51,14 @@ Shirts --> "%S"
 Overtops --> "%T"
 - Sweatshirt                     : `SWST`
 - Hoodie                           : `HOOT`
-- Jacket                            : `JAKT`
 - Blazer                             : `BLZT`
-- Coats                              : `COAT`
-- Vest                                : `VEST`
-- Puffer Jacket                 : `PUFT`
+
+
+Jackets --> "%C"
+- Jacket 			: 'JAKC'
+- Coats				: 'COAC'
+- Vest				: 'VESC'
+- Puffer			: 'PUFTC'
 
 Pants  --> "%P"
 - Skirt                                : `SKIP`
