@@ -28,7 +28,21 @@ CREATE TABLE Wardrobe (
 );
 -- INSERT INTO Wardrobe (pieceID,R_COLOR,G_COLOR,B_COLOR,TYPE) VALUES (999,1,1,1,'oo');
 
-
+"""
+Occasion:
+  1 = Formal
+  2 = Semi_Formal 
+  3 = Casual
+  4 = Workout
+  5 = Outdoors
+  6 = Comfy
+Weather:
+  1 = Cold
+  2 = Hot
+  3 = Rainy
+  4 = Snowy
+  5 = Avg
+"""
 CREATE TABLE Outfits (
 	OUTFIT_ID INT PRIMARY KEY,
 	HAT INT,
@@ -41,16 +55,7 @@ CREATE TABLE Outfits (
 	TIMES_WORN INT,
 	RECENT_DATE_WORN DATE,
 	FIT_SCORE NUMERIC(3,2),
-	OC_FORMAL INT,
- 	OC_SEMI_FORMAL INT,
- 	OC_CASUAL INT,
- 	OC_WORKOUT INT,
- 	OC_OUTDOORS INT,
- 	OC_COMFY INT,
- 	WE_COLD INT,
- 	WE_HOT INT,
- 	WE_RAINY INT,
- 	WE_SNOWY INT,
- 	WE_AVG_TMP INT
-
+	OCCASION = INT,
+	WEATHER = INT,
+	LIKED = BOOLEAN
 );
