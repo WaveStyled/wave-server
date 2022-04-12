@@ -42,6 +42,7 @@ Weather:
   3 = Rainy
   4 = Snowy
   5 = Avg
+ - There may be duplicate outfits for different weathers/occaions that can be adjusted for later
 """
 CREATE TABLE Outfits (
 	OUTFIT_ID INT PRIMARY KEY,
@@ -54,7 +55,7 @@ CREATE TABLE Outfits (
 	MISC INT,
 	TIMES_WORN INT,
 	RECENT_DATE_WORN DATE,
-	FIT_SCORE NUMERIC(3,2),
+	FIT_SCORE NUMERIC(3,2) DEFAULT 0.5,
 	OCCASION = INT,
 	WEATHER = INT,
 	LIKED = BOOLEAN
