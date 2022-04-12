@@ -15,7 +15,7 @@ def enumerate_colors(colors):
   return {col: i for i, col in enumerate(unique_colors)}
 
 def add_color_to_mapping(mapping, color):
-  if color not in mapping:
+  if color and color not in mapping:
     val = max(mapping, key=mapping.get)+1
     mapping[color] = val
 
