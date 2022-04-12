@@ -8,6 +8,18 @@ from tensorflow.keras.callbacks import Callback
 from sklearn.datasets import make_circles
 
 
+
+def enumerate_colors(colors):
+  filtered_list = list(filter(lambda ele:ele is not None, colors))
+  unique_colors = set(filtered_list)
+  return {col: i for i, col in enumerate(unique_colors)}
+
+def add_color_to_mapping(mapping, color):
+  if color not in mapping:
+    val = max(mapping, key=mapping.get)+1
+    mapping[color] = val
+
+
 #tf.debugging.set_log_device_placement(True)
 
 num_points = 300
