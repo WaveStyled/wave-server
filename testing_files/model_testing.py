@@ -5,6 +5,7 @@ from tensorflow.keras.models import Model, Sequential
 from tensorflow.keras.layers import Dense, Input, Activation
 from tensorflow.keras.optimizers import SGD
 from tensorflow.keras.callbacks import Callback
+from sklearn.model_selection import train_test_split
 from sklearn.datasets import make_circles
 
 
@@ -14,9 +15,9 @@ num_points = 300
 x, y = make_circles(n_samples=num_points, random_state=144, shuffle=True, factor=0.7, noise=0.01)
 def build_model2(): 
   model = Sequential() 
-  model.add(Dense(units = 8, input_dim=2, activation='tanh'))
+  model.add(Dense(units = 8, input_dim=2, activation='relu'))
   # num_parameters = 8 * (2 + 1) = 24 
-  model.add(Dense(units = 8, activation='tanh')) 
+  model.add(Dense(units = 16, activation='relu')) 
   # = 8 * (8 + 1) = 72
   model.add(Dense(units = 1, activation='sigmoid')) 
   # = 1 * (8 + 1) = 9

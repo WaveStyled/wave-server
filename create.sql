@@ -44,6 +44,8 @@ Weather:
   5 = Avg
  - There may be duplicate outfits for different weathers/occaions that can be adjusted for later
 """
+
+-- \copy outfits TO 'C:\Users\mdaxn\OneDrive\Documents\WaveStyled\outfits.csv' HEADER CSV;
 CREATE TABLE Outfits (
 	OUTFIT_ID INT PRIMARY KEY,
 	HAT INT,

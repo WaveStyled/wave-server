@@ -3,7 +3,6 @@ var express = require('express');
 var app = express();
 var cors = require("cors");
 const axios = require('axios');
-// const {spawn} = require('child_process')
 
 
 // File Imports
@@ -19,29 +18,51 @@ app.use(express.json());
 
 // Paths
 
-// add an item
+/*
+Path: /add
+
+Desc:
+App contacts /add endpoint after entering an item's attr. The endpoint adds the given data to the SQL wardrobe DB. It then pings the python server with
+the items data so it can be added to the pythons wardrobe object.
+
+Input
+ - JSON dictinary with the items information
+Output
+ - The added item is sent to python as a json dictionary
+ - User ID : NOT IMPLEMENTED
+ */
 
 app.post("/add",async(req,res) => {
   try {
+    // Get the data from the request
     var data = req.body;
-   
+    // Create insert query
     var query = "INSERT INTO wardrobe VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)";
+    // Setup query data
     var query_data = [data.PIECEID, data.COLOR, data.TYPE, null, data.TIMES_WORN, data.RATING, 
                       data.OC_FORMAL, data.OC_SEMI_FORMAL, data.OC_CASUAL, data.OC_WORKOUT, data.OC_OUTDOORS, 
                       data.OC_COMFY, data.WE_COLD, data.WE_HOT, data.WE_RAINY, data.WE_SNOWY, data.WE_TYPICAL,
                       data.DIRTY];
-    const add_newItem = await DBconn.query(query,query_data);
+    // Execute query
+    const add_newItem = await DBconn.query(query,query_data).catch(err => {
+      console.log(err);
+    });
+    
+    // This might not be needed
     res.json(add_newItem);
-  
+   // Setup data to send back to python, same dict that was sent to SQL DB
    const py_ping = {
       "data": query_data,
    };
 
-   // to specify a specific userid http://localhost:5001/ping?userid=XXXX
+  // Execute put to python server with json dict
+  // to specify a specific userid http://localhost:5001/ping?userid=XXXX
   axios.put("http://localhost:5001/add?userid=999", py_ping).then((res) =>{
-     console.log(res.data);
-  }).catch((err) => {
-      console.log(err);
+    // Output if not successful
+    if(res.data != 200){
+      console.log("Error: Python Rejected Add");
+    }
+    
   });
 
   }
@@ -51,53 +72,88 @@ app.post("/add",async(req,res) => {
   }
 });
 
-// get wardrobe
+/*
+Path: /wardobe
+
+Desc:
+App contacts endpoint to get the entire wardrobe from database. Node sends the wardrobe back to the app
+
+Input
+ - USER ID : NOT IMPLEMENTED
+Output
+ - JSON dictionary of the wardrobe
+ */
 app.get("/wardrobe",async(req,res) => {
   try {
+    // query
     var query = "SELECT * FROM Wardrobe";
+    // Execute query
     const wardrobe = await DBconn.query(query);
+    // Send json of all rows
     res.json(wardrobe.rows);
   }
+  // Log errors
   catch(err) {
     console.error(err.message);
   }
 });
 
+/*
+Path: /delete/:id
 
-// get a recommendation
+Desc:
+App contacts endpoint to delete an item from the wardrobe. Endpoint removes the item from the SQL db based on pieceID 
+then it contacts python server to remove it from the wardrobe object
 
-// update an item
-
-//DELETE item from wardrobe
+Input
+ - Piece ID
+ - To python server: user id - NOT IMPLEMENTED
+Output
+ - NONE
+ */
 app.delete("/delete/:id",async(req,res) => {
+  // Get ID
   const id = req.params.id;
+  
   try {
+    // Delete query
     const del = `DELETE FROM Wardrobe WHERE PIECEID = $1 RETURNING *`;
-    const query = {
-      text: del,
-      values: [id],
-    };
-    const deletedItem = await DBconn.query(query);
+    const query_data = [id]
+    //Execute SQL delete
+    const deletedItem = await DBconn.query(query,query_data);
     res.json(deletedItem);
-
+    
     const py_ping = {
-      "PK": data.PIECEID
+      "PK": id
    };
+   // Ping python with Piece ID
     axios.put("http://localhost:5001/delete?userid=999", py_ping).then((res) => {
-      console.log(res.data);
-    }).catch((err) => {
-      console.log(err);
-    });
+      // Log error if delete is rejected
+      if(res.data != 200){
+        console.log("Error: Python Rejected Add");
+      }
+    })
   }
-
   catch(err) {
     console.error(err.message);
   }
 });
 
+// Testing functions
 
-// Resets the wardrobe table
+/*
+Function: dropCreateTable
+
+Desc:
+Resets wardrobe table while for testing purposes
+
+Input
+ - NONE
+Output
+ - NONE
+ */
 const dropcreateTable = async()=> {
+  // Create table query 
   var query = "CREATE TABLE wardrobe ( \
         pieceID INT PRIMARY KEY, \
         COLOR VARCHAR(12), \
@@ -117,7 +173,9 @@ const dropcreateTable = async()=> {
         WE_SNOWY BOOLEAN, \
         WE_AVG_TMP BOOLEAN, \
         DIRTY BOOLEAN)";
+  // DROP wardrobe table if it currently exists
   await DBconn.query("DROP TABLE IF EXISTS wardrobe");
+  // Execute create table
   await DBconn.query(query);
   return true;
 }
@@ -131,8 +189,9 @@ const shutdownPython = async() => {
 var server = app.listen(port,() => {
   console.log("Server has started on port: " + port);
   
-  // for testing purposes
+
   console.log("Resetting the database...");
+  // Reset the table
   dropcreateTable().then((result)=>{
     if(result){
       console.log("Database has been reset");
@@ -141,26 +200,22 @@ var server = app.listen(port,() => {
       console.log(result);
     }
   });
-  // console.log("Initializing the Python Files: \n");
-  /// python = spawn('python3', ['../wave-recommender/Link.py']);
-  // console.log("Link.py Running...\n");
-
 });
 
-// Facilitates app shut down (CRTL + C)
+/*
+Function: shutdown function, executes on CTRL + C
+
+Desc:
+Triggers shutdown process. Other shutdown procedures will go here.
+Input
+ - NONE
+Output
+ - NONE
+ */
 process.on('SIGINT', function() {
   console.log( "\nShutting Main Server Down and Closing Database Connections...");
   console.log('Http server closed.');
   DBconn.end();
   console.log("App Successfully Shut Down");
-  
- // shutdownPython().then((result)=>{
- //   if(result){
- //     console.log("Python Server Succesfully Shutdown");
- //   }
- // });
-  
   server.close();
-  //process.exit(0);
-  // some other closing procedures go here
 });
