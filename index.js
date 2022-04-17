@@ -18,22 +18,25 @@ app.use(express.json());
 
 // Paths
 
-app.put("/startup",async(req,res) => {
+// Startup path
+app.put("/startup/:userid/",async(req,res) => {
   try{
-    console.log("Poop");
+    const userid = req.params.userid;
+    
     var query = "SELECT * FROM wardrobe;";
     var wardrobe = await DBconn.query(query).catch(err => {
       console.log(err);
     });
+    // Sends wardrobe to app
     res.json(wardrobe);
-    axios.put("http://localhost:5001/start").then((res) =>{
+    // Sends ping to python
+    axios.put(`http://localhost:5001/start?userid=${userid}`).then((res) =>{
       // Output if not successful
+      console.log(res.data);
       if(res.data != 200){
         console.log("Error: Python Rejected Add");
       }
-      
     });
-
   }
   catch(err){
     console.log(err)
@@ -98,7 +101,7 @@ app.post("/add",async(req,res) => {
 });
 
 /*
-Path: /wardobe
+Path: /wardrobe
 
 Desc:
 App contacts endpoint to get the entire wardrobe from database. Node sends the wardrobe back to the app
@@ -136,9 +139,9 @@ Input
 Output
  - NONE
  */
-app.delete("/delete/:id",async(req,res) => {
+app.delete("/delete/:userid",async(req,res) => {
   // Get ID
-  const id = req.params.id;
+  const id = req.params.userid;
   
   try {
     // Delete query
@@ -163,6 +166,49 @@ app.delete("/delete/:id",async(req,res) => {
     console.error(err.message);
   }
 });
+
+// Recommender Train path
+app.put("/recommender_train/:userid/",async(req,res) => {
+  try{
+    const userid = req.params.userid;
+    res.sendStatus(200);
+    axios.get(`http://localhost:5001/recommender_train?userid=${userid}`).then((res) =>{
+      // Output if not successful
+      //console.log(res.data);
+      if(res.data != 200){
+        console.log("Error: Python Recommender Train");
+      }
+    });
+  }
+  catch(err){
+    console.log(err)
+  }
+});
+
+// Recommender Train path
+app.put("/recommend/:userid/:occasion/:weather",async(req,res) => {
+  try{
+    const userid = req.params.userid;
+    const occasion = req.params.occasion;
+    const weather = req.params.weather;    
+    res.sendStatus(200);
+    const py_ping = {
+      "occasion": occasion,
+      "weather": weather
+   };
+
+    axios.put(`http://localhost:5001/recommend?userid=${userid}`,py_ping).then((res) =>{
+      // Output if not successful
+      if(res.data != 200){
+        console.log("Error: Python Recommender Train");
+      }
+    });
+  }
+  catch(err){
+    console.log(err)
+  }
+});
+
 
 // Testing functions
 
