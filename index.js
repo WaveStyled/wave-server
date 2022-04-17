@@ -60,9 +60,10 @@ Output
  - User ID : NOT IMPLEMENTED
  */
 
-app.post("/add",async(req,res) => {
+app.post("/add/:userid/",async(req,res) => {
   try {
     // Get the data from the request
+    const userid = req.params.userid;
     var data = req.body;
     // Create insert query
     var query = "INSERT INTO wardrobe VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)";
@@ -85,7 +86,7 @@ app.post("/add",async(req,res) => {
 
   // Execute put to python server with json dict
   // to specify a specific userid http://localhost:5001/ping?userid=XXXX
-  axios.put("http://localhost:5001/add?userid=999", py_ping).then((res) =>{
+  axios.put(`http://localhost:5001/add?userid=${userid}`, py_ping).then((res) =>{
     // Output if not successful
     if(res.data != 200){
       console.log("Error: Python Rejected Add");
@@ -199,6 +200,7 @@ app.put("/recommend/:userid/:occasion/:weather",async(req,res) => {
 
     axios.put(`http://localhost:5001/recommend?userid=${userid}`,py_ping).then((res) =>{
       // Output if not successful
+
       if(res.data != 200){
         console.log("Error: Python Recommender Train");
       }
@@ -209,6 +211,33 @@ app.put("/recommend/:userid/:occasion/:weather",async(req,res) => {
   }
 });
 
+// Calibrate Start
+app.get("/start_calibrate/:userid",async(req,res)=>{
+
+  try {
+    const userid = req.params.userid;
+    const result = await axios.get(`localhost:5000/calibrate_start?userid=${userid}`);
+    res.json(result)
+  }
+  catch(err){
+    console.log(err)
+  }
+});
+
+
+// Calibrate End
+app.get("/end_calibrate/:userid",async(req,res)=>{
+  var data = req.body;
+
+  try {
+    const userid = req.params.userid;
+    const result = await axios.put(`localhost:5000/calibrate_end?userid=${userid}`,data);
+    res.sendStatus(200);
+  }
+  catch(err){
+    console.log(err)
+  }
+});
 
 // Testing functions
 
