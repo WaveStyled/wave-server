@@ -18,6 +18,31 @@ app.use(express.json());
 
 // Paths
 
+app.put("/startup",async(req,res) => {
+  try{
+    console.log("Poop");
+    var query = "SELECT * FROM wardrobe;";
+    var wardrobe = await DBconn.query(query).catch(err => {
+      console.log(err);
+    });
+    res.json(wardrobe);
+    axios.put("http://localhost:5001/start").then((res) =>{
+      // Output if not successful
+      if(res.data != 200){
+        console.log("Error: Python Rejected Add");
+      }
+      
+    });
+
+  }
+  catch(err){
+    console.log(err)
+  }
+});
+
+
+
+
 /*
 Path: /add
 
