@@ -173,13 +173,15 @@ app.put("/recommender_train/:userid/",async(req,res) => {
   try{
     const userid = req.params.userid;
     res.sendStatus(200);
-    axios.get(`http://localhost:5001/recommender_train?userid=${userid}`).then((res) =>{
+    await axios.get(`http://localhost:5001/recommender_train?userid=${userid}`).then((res) =>{
       // Output if not successful
       //console.log(res.data);
       if(res.data != 200){
         console.log("Error: Python Recommender Train");
       }
-    });
+    }).catch((error)=> {
+      console.log(error);
+    })
   }
   catch(err){
     console.log(err)
@@ -187,24 +189,22 @@ app.put("/recommender_train/:userid/",async(req,res) => {
 });
 
 // Recommender Train path
-app.put("/recommend/:userid/:occasion/:weather",async(req,res) => {
+app.put("/recommend/:userid/:occasion/:weather/",async(req,res) => {
   try{
     const userid = req.params.userid;
     const occasion = req.params.occasion;
     const weather = req.params.weather;    
-    res.sendStatus(200);
     const py_ping = {
       "occasion": occasion,
       "weather": weather
    };
 
-    axios.put(`http://localhost:5001/recommend?userid=${userid}`,py_ping).then((res) =>{
+    await axios.put(`http://localhost:5001/recommend?userid=${userid}`,py_ping).then((result) =>{
       // Output if not successful
-
-      if(res.data != 200){
-        console.log("Error: Python Recommender Train");
-      }
-    });
+      res.send(result.data);
+    }).catch((error)=> {
+      console.log(error);
+    })
   }
   catch(err){
     console.log(err)
@@ -212,13 +212,19 @@ app.put("/recommend/:userid/:occasion/:weather",async(req,res) => {
 });
 
 // Calibrate Start
-app.get("/start_calibrate/:userid",async(req,res)=>{
+app.put("/start_calibrate/:userid/:num_calibrate",async(req,res)=>{
 
   try {
     const userid = req.params.userid;
-    const result = await axios.get(`localhost:5000/calibrate_start?userid=${userid}`);
-    res.json(result)
+    const  num_calibrate = { "num_calibrate":req.params.num_calibrate};
+    axios.put(`http://localhost:5001/calibrate_start?userid=${userid}`,num_calibrate).then((result) =>{
+      res.send(result.body);
+    }).catch((error) =>{
+      console.log(error);
+    
   }
+  );
+      }
   catch(err){
     console.log(err)
   }
@@ -226,8 +232,8 @@ app.get("/start_calibrate/:userid",async(req,res)=>{
 
 
 // Calibrate End
-app.get("/end_calibrate/:userid",async(req,res)=>{
-  var data = req.body;
+app.put("/end_calibrate/:userid",async(req,res)=>{
+  var data = {"data":req.body};
 
   try {
     const userid = req.params.userid;
