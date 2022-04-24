@@ -156,7 +156,7 @@ app.delete("/delete/:userid/:pieceid",async(req,res) => {
       "PK": id
    };
    // Ping python with Piece ID
-    axios.delete(`http://localhost:5001/delete/?userid=${req.params.userid}?id=${id}`).then((res) => {
+    axios.delete(`http://localhost:5001/delete/?userid=${req.params.userid}&id=${id}`).then((res) => {
       // Log error if delete is rejected
       if(res.data != 200){
         console.log("Error: Python Rejected Add");
