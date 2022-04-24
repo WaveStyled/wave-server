@@ -140,23 +140,23 @@ Input
 Output
  - NONE
  */
-app.delete("/delete/:userid",async(req,res) => {
+app.delete("/delete/:userid/:pieceid",async(req,res) => {
   // Get ID
-  const id = req.body.id;
-  
+  const id = req.params.pieceid;
+  console.log(id)
   try {
     // Delete query
     const del = `DELETE FROM Wardrobe WHERE PIECEID = $1 RETURNING *`;
     const query_data = [id]
     //Execute SQL delete
-    const deletedItem = await DBconn.query(query,query_data);
+    const deletedItem = await DBconn.query(del,query_data);
     res.json(deletedItem);
     
     const py_ping = {
       "PK": id
    };
    // Ping python with Piece ID
-    axios.put("http://localhost:5001/delete?userid=999", py_ping).then((res) => {
+    axios.delete(`http://localhost:5001/delete?userid=${req.params.userid}`, py_ping).then((res) => {
       // Log error if delete is rejected
       if(res.data != 200){
         console.log("Error: Python Rejected Add");
