@@ -8,7 +8,7 @@ today = date.today()
 # mm/dd/y
 d3 = today.strftime("%m/%d/%y")
 
-data = pd.read_csv('../../wave-recommender/good_matts_wardrobe.csv') 
+data = pd.read_csv('../../wave-recommender/csv_files/good_matts_wardrobe.csv') 
 url = "http://localhost:5000/add/123"
 
 for row in data.itertuples(index=False):

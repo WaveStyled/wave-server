@@ -119,7 +119,7 @@ app.get("/wardrobe",async(req,res) => {
     // Execute query
     const wardrobe = await DBconn.query(query);
     // Send json of all rows
-    res.json(wardrobe.rows);
+    await res.json(wardrobe.rows);
   }
   // Log errors
   catch(err) {
@@ -142,7 +142,7 @@ Output
  */
 app.delete("/delete/:userid",async(req,res) => {
   // Get ID
-  const id = req.params.userid;
+  const id = req.body.id;
   
   try {
     // Delete query
