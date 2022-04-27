@@ -4,9 +4,14 @@ var app = express();
 var cors = require("cors");
 const axios = require('axios');
 
-
 // File Imports
-const DBconn = require("./connectDB");
+const DBconn = require("./utils/connectDB.js");
+const sequelized = require("./utils/database.js")
+const { signup, login, isAuth } = require('./controllers/auth.js');
+
+
+// Paths
+
 
 // Main Vars
 var port = 5000;
@@ -16,7 +21,14 @@ var port = 5000;
 app.use(cors());
 app.use(express.json());
 
-// Paths
+sequelized.sync({ force: true })
+  .then(() => {
+    console.log(`Database & tables created!`)
+  })
+
+app.post('/users/signup', signup);
+app.post('/users/login', login);
+app.get('/users/private/auth', isAuth);
 
 // Startup path
 app.put("/startup/:userid/",async(req,res) => {
