@@ -2,7 +2,7 @@ User = require('../models/user.js')
 bcrypt = require('bcryptjs')
 jwt = require('jsonwebtoken')
 
-const signup = (req, res, next) => {
+const signup = async(req, res, next) => {
     // checks if email already exists
     User.findOne({ where : {
         email: req.body.email, 
@@ -41,7 +41,7 @@ const signup = (req, res, next) => {
     });
 };
 
-const login = (req, res, next) => {
+const login = async(req, res, next) => {
     // checks if email exists
     User.findOne({ where : {
         email: req.body.email, 
