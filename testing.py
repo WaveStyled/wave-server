@@ -16,5 +16,5 @@ if __name__ == '__main__':
     header = {
         "Authorization" : tok
     }
-    r = requests.get('http://localhost:5000/users/private/auth', headers=header)
+    r = requests.get('http://localhost:5000/users/private/auth', json=data,headers=header)
     print(r.text)

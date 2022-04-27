@@ -7,28 +7,23 @@ const axios = require('axios');
 // File Imports
 const DBconn = require("./utils/connectDB.js");
 const sequelized = require("./utils/database.js")
-const { signup, login, isAuth } = require('./userauth/auth.js');
-
-
-// Paths
-
+const { signup, login, authenticate } = require('./userauth/auth.js');
 
 // Main Vars
 var port = 5000;
-
 
 // Allow ability to get data from client in json form
 app.use(cors());
 app.use(express.json());
 
-sequelized.sync({ force: true })
+sequelized.sync({ force: true })  // this resets the user table every time
   .then(() => {
     console.log(`Database & tables created!`)
   })
 
 app.post('/users/signup', signup);
 app.post('/users/login', login);
-app.get('/users/private/auth', isAuth);
+app.get('/users/private/auth', authenticate);
 
 // Startup path
 app.put("/startup/:userid/",async(req,res) => {
