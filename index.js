@@ -7,7 +7,7 @@ const axios = require('axios');
 // File Imports
 const DBconn = require("./utils/connectDB.js");
 const sequelized = require("./utils/database.js")
-const { signup, login, isAuth } = require('./controllers/auth.js');
+const { signup, login, isAuth } = require('./userauth/auth.js');
 
 
 // Paths
