@@ -147,7 +147,7 @@ Input
 Output
  - NONE
  */
-app.delete("/delete/:userid/:pieceid",async(req,res) => {
+app.post("/delete/:userid/:pieceid",async(req,res) => {
   // Get ID
   const id = req.params.pieceid;
   console.log(id)
@@ -157,7 +157,8 @@ app.delete("/delete/:userid/:pieceid",async(req,res) => {
     const query_data = [id]
     //Execute SQL delete
     const deletedItem = await DBconn.query(del,query_data);
-    res.json(deletedItem);
+    const newDB = await DBconn.query("SELECT * FROM Wardrobe");
+    await res.json(newDB.rows);
     
     const py_ping = {
       "PK": id
