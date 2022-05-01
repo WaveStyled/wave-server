@@ -55,7 +55,7 @@ const login = async(req, res, next) => {
                 if (err) { // error while comparing
                     res.status(502).json({message: "error while checking user password"});
                 } else if (compareRes) { // password match
-                    const token = jwt.sign({ email: req.body.email }, 'secret', { expiresIn: '1h' });
+                    const token = jwt.sign({ email: req.body.email }, 'secret', { expiresIn: '5h' });
                     res.status(200).json({message: "user logged in", "token": token});
                 } else { // password doesnt match
                     res.status(401).json({message: "invalid credentials"});
