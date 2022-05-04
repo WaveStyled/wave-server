@@ -225,7 +225,7 @@ app.put("/start_calibrate/:userid/:num_calibrate",async(req,res)=>{
   try {
     const userid = req.params.userid;
     const  num_calibrate = { "num_calibrate":req.params.num_calibrate};
-    axios.put(`http://localhost:5001/calibrate_start/?userid=${userid}&num_calibrate = ${req.params.num_calibrate}`).then((result) =>{
+    axios.put(`http://localhost:5001/calibrate_start?userid=${userid}&num_calibrate = ${req.params.num_calibrate}`).then((result) =>{
       res.send(result.body);
     }).catch((error) =>{
       console.log(error);
