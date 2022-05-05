@@ -26,9 +26,9 @@ for row in data.itertuples(index=False):
 			 'WE_RAINY': row.we_rainy,
 			 'WE_SNOWY': row.we_snowy,
 			 'WE_TYPICAL': row.we_typical,
-			 'RECENT_DATE_WORN' : d3,
+			 'DATE_ADDED' : d3,
 			 'TIMES_WORN': 0,
 			 'RATING':     0.5,
-			 'DIRTY': 0  
+			 'DIRTY': 0,
 			}
     r = requests.post(url,json=myobj)
