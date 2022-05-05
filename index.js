@@ -37,9 +37,8 @@ app.put("/startup/:userid/",async(req,res) => {
     // Sends wardrobe to app
     res.json(wardrobe);
     // Sends ping to python
-    axios.put(`http://localhost:5001/start?userid=${userid}`).then((res) =>{
+    axios.put(`http://localhost:5001/start/?userid=${userid}`).then((res) =>{
       // Output if not successful
-      console.log(res.data);
       if(res.data != 200){
         console.log("Error: Python Rejected Add");
       }
@@ -225,7 +224,7 @@ app.put("/start_calibrate/:userid/:num_calibrate",async(req,res)=>{
   try {
     const userid = req.params.userid;
     const  num_calibrate = { "num_calibrate":req.params.num_calibrate};
-    axios.put(`http://localhost:5001/calibrate_start?userid=${userid}&num_calibrate=${req.params.num_calibrate}`).then((result) =>{
+    axios.put(`http://localhost:5001/calibrate_start/?userid=${userid}&num_calibrate=${req.params.num_calibrate}`).then((result) =>{
       res.json(result.body);
     }).catch((error) =>{
       console.log(error);
