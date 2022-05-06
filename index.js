@@ -281,7 +281,7 @@ app.put("/start_calibrate/:userid/:num_calibrate", async (req, res) => {
         `http://localhost:5001/calibrate_start/?userid=${userid}&num_calibrate=${req.params.num_calibrate}`
       )
       .then((result) => {
-        res.json(result.body);
+        res.json(result.data);
       })
       .catch((error) => {
         console.log(error);
