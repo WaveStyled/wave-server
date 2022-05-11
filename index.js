@@ -322,7 +322,7 @@ Output
  */
 const dropcreateTable = async () => {
   // Create table query
-  var query =
+  var createWardrobe =
     "CREATE TABLE wardrobe ( \
         pieceID INT PRIMARY KEY, \
         COLOR VARCHAR(12), \
@@ -343,13 +343,31 @@ const dropcreateTable = async () => {
         WE_AVG_TMP BOOLEAN, \
         DIRTY BOOLEAN)";
 
+  var createOutfits = "CREATE TABLE Outfits (\
+    OUTFIT_ID INT PRIMARY KEY,\
+    HAT INT,\
+    SHIRT INT,\
+    SWEATER INT,\
+    JACKET INT,\
+    BOTTOM_LAYER INT,\
+    SHOES INT,\
+    MISC INT,\
+    TIMES_WORN INT DEFAULT 0,\
+    RECENT_DATE_WORN DATE,\
+    FIT_SCORE NUMERIC(3,2) DEFAULT 0.5,\
+    OCCASION INT,\
+    WEATHER INT,\
+    LIKED BOOLEAN\
+  )";
   var image_table =
     "CREATE TABLE images ( pieceID INT PRIMARY KEY, IMAGE_ENCODE TEXT)";
   // DROP wardrobe table if it currently exists
   await DBconn.query("DROP TABLE IF EXISTS wardrobe");
   await DBconn.query("DROP TABLE IF EXISTS Images");
+  await DBconn.query("DROP TABLE IF EXISTS Outfits")
   // Execute create table
-  await DBconn.query(query);
+  await DBconn.query(createWardrobe);
+  await DBconn.query(createOutfits);
   await DBconn.query(image_table);
   return true;
 };
