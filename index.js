@@ -294,6 +294,7 @@ app.put("/start_calibrate/:userid/:num_calibrate", async (req, res) => {
 // Calibrate End
 app.put("/end_calibrate/:userid", async (req, res) => {
   var data = {data : req.body}
+  console.log(data);
   try {
     const userid = req.params.userid;
     const result = await axios.put(
