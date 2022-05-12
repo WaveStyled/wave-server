@@ -293,12 +293,11 @@ app.put("/start_calibrate/:userid/:num_calibrate", async (req, res) => {
 
 // Calibrate End
 app.put("/end_calibrate/:userid", async (req, res) => {
-  var data = { data: req.body };
-
+  var data = {data : req.body}
   try {
     const userid = req.params.userid;
     const result = await axios.put(
-      `localhost:5000/calibrate_end?userid=${userid}`,
+      `http://localhost:5001/calibrate_end?userid=${userid}`,
       data
     );
     res.sendStatus(200);
