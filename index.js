@@ -228,9 +228,10 @@ app.post("/delete/:userid/:pieceid", async (req, res) => {
 app.put("/recommender_train/:userid/", async (req, res) => {
   try {
     const userid = req.params.userid;
+    console.log(userid);
     res.sendStatus(200);
     await axios
-      .get(`http://localhost:5001/recommender_train?userid=${userid}`)
+      .post(`http://localhost:5001/recommend_train/?userid=${userid}`)
       .then((res) => {
         // Output if not successful
         //console.log(res.data);
@@ -258,7 +259,7 @@ app.put("/recommend/:userid/:occasion/:weather/", async (req, res) => {
     };
 
     await axios
-      .put(`http://localhost:5001/recommend?userid=${userid}`, py_ping)
+      .get(`http://localhost:5001/recommend/?userid=${userid}&occasion=${occasion}&weather=${weather}`, py_ping)
       .then((result) => {
         // Output if not successful
         res.send(result.data);
