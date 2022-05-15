@@ -299,10 +299,50 @@ app.put("/end_calibrate/:userid", async (req, res) => {
   try {
     const userid = req.params.userid;
     const result = await axios.put(
-      `http://localhost:5001/calibrate_end?userid=${userid}`,
+      `http://localhost:5001/calibrate_end/?userid=${userid}`,
       data
     );
     res.sendStatus(200);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+app.put("/OOTD/:userid", async (req, res) => {
+  try {
+    const userid = req.params.userid;
+    var data = {outfit : req.body.outfit, weather: req.body.weather, occasion : req.body.occasion}
+    console.log(data);
+    await axios
+      .put(
+        `http://localhost:5001/OOTD/?userid=${userid}`, data
+      )
+      .then((result) => {
+        res.json(result.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+app.get("/OOTD/:userid", async (req, res) => {
+  try {
+    const userid = req.params.userid;
+    var data = {weather: req.body.weather, occasion : req.body.occasion, date : req.body.date}
+    console.log(data);
+    await axios
+      .put(
+        `http://localhost:5001/OOTD/?userid=${userid}`, data
+      )
+      .then((result) => {
+        res.json(result.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   } catch (err) {
     console.log(err);
   }
