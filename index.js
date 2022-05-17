@@ -167,14 +167,16 @@ app.get("/wardrobe", async (req, res) => {
  * Update a Wardrobe Item
  * 
  */
-app.post("update/:userid", async (req, res) => {
+app.put("/change/:userid", async (req, res) => {
   try {
     const userid = req.params.userid;
     var data = req.body;
+
+    console.log(data)
     // Create insert query
 
-    var query = "UPDATE wardobe SET (color, type, times_worn, rating, oc_formal, oc_semi_formal, oc_casual, oc_workout, oc_outdoors, oc_comfy, we_cold, we_hot, we_rainy, we_snowy, we_avg_tmp, dirty) \
-      = ($1,$2,$3,DEFAULT,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16) WHERE pieceid = $17";
+    var query = "UPDATE wardrobe SET (color, type, times_worn, rating, oc_formal, oc_semi_formal, oc_casual, oc_workout, oc_outdoors, oc_comfy, we_cold, we_hot, we_rainy, we_snowy, we_avg_tmp, dirty) \
+      = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16) WHERE pieceid = $17";
     // Setup query data
     var query_data = [
       data.COLOR,
@@ -413,7 +415,7 @@ app.get("/OOTD/:userid", async (req, res) => {
     };
     console.log(data);
     await axios
-      .put(`http://localhost:5001/OOTD/?userid=${userid}`, data)
+      .get(`http://localhost:5001/OOTD/?userid=${userid}`, data)
       .then((result) => {
         res.json(result.data);
       })
