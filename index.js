@@ -163,6 +163,76 @@ app.get("/wardrobe", async (req, res) => {
   }
 });
 
+/**
+ * Update a Wardrobe Item
+ * 
+ */
+app.post("update/:userid", async (req, res) => {
+  try {
+    const userid = req.params.userid;
+    var data = req.body;
+    // Create insert query
+
+    var query = "UPDATE wardobe SET (color, type, times_worn, rating, oc_formal, oc_semi_formal, oc_casual, oc_workout, oc_outdoors, oc_comfy, we_cold, we_hot, we_rainy, we_snowy, we_avg_tmp, dirty) \
+      = ($1,$2,$3,DEFAULT,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16) WHERE pieceid = $17";
+    // Setup query data
+    var query_data = [
+      data.COLOR,
+      data.TYPE,
+      data.TIMES_WORN,
+      data.RATING,
+      data.OC_FORMAL,
+      data.OC_SEMI_FORMAL,
+      data.OC_CASUAL,
+      data.OC_WORKOUT,
+      data.OC_OUTDOORS,
+      data.OC_COMFY,
+      data.WE_COLD,
+      data.WE_HOT,
+      data.WE_RAINY,
+      data.WE_SNOWY,
+      data.WE_TYPICAL,
+      data.DIRTY,
+      data.PIECEID
+    ];
+
+    // Execute query
+    const add_newItem = await DBconn.query(query, query_data).catch((err) => {
+      console.log(err);
+    });
+
+    var add_image = "UPDATE Images SET image_encode = $1 WHERE pieceid = $2";
+    var image_data = [data.IMAGE, data.PIECEID];
+
+    try {
+      await DBconn.query(add_image, image_data).catch((err) => {
+        console.log("CANNOT ADD IMAGE", err);
+      });
+    } catch (error) {}
+
+    // This might not be needed
+    res.json(add_newItem);
+    // Setup data to send back to python, same dict that was sent to SQL DB
+    query_data.splice(3, 0, null);
+
+    const py_ping = {
+      data: query_data,
+    };
+    // // Execute put to python server with json dict
+    // // to specify a specific userid http://localhost:5001/ping?userid=XXXX
+    // axios
+    //   .put(`http://localhost:5001/add?userid=${userid}`, py_ping)
+    //   .then((res) => {
+    //     // Output if not successful
+    //     if (res.data != 200) {
+    //       console.log("Error: Python Rejected Add");
+    //     }
+    //   });
+  } catch (err) {
+    console.error(err.message);
+  }
+});
+
 /*
 Path: /delete/:id
 
@@ -187,7 +257,7 @@ app.post("/delete/:userid/:pieceid", async (req, res) => {
     //Execute SQL delete
     const deletedItem = await DBconn.query(del, query_data);
 
-    const delimg = 'DELETE FROM Images WHERE PIECEID = $1';
+    const delimg = "DELETE FROM Images WHERE PIECEID = $1";
     await DBconn.query(delimg, query_data);
 
     const newDB = await DBconn.query(
@@ -259,7 +329,10 @@ app.put("/recommend/:userid/:occasion/:weather/", async (req, res) => {
     };
 
     await axios
-      .get(`http://localhost:5001/recommend/?userid=${userid}&occasion=${occasion}&weather=${weather}`, py_ping)
+      .get(
+        `http://localhost:5001/recommend/?userid=${userid}&occasion=${occasion}&weather=${weather}`,
+        py_ping
+      )
       .then((result) => {
         // Output if not successful
         res.send(result.data);
@@ -294,7 +367,7 @@ app.put("/start_calibrate/:userid/:num_calibrate", async (req, res) => {
 
 // Calibrate End
 app.put("/end_calibrate/:userid", async (req, res) => {
-  var data = {data : req.body}
+  var data = { data: req.body };
   console.log(data);
   try {
     const userid = req.params.userid;
@@ -311,12 +384,14 @@ app.put("/end_calibrate/:userid", async (req, res) => {
 app.put("/OOTD/:userid", async (req, res) => {
   try {
     const userid = req.params.userid;
-    var data = {outfit : req.body.outfit, weather: req.body.weather, occasion : req.body.occasion}
+    var data = {
+      outfit: req.body.outfit,
+      weather: req.body.weather,
+      occasion: req.body.occasion,
+    };
     console.log(data);
     await axios
-      .put(
-        `http://localhost:5001/OOTD/?userid=${userid}`, data
-      )
+      .put(`http://localhost:5001/OOTD/?userid=${userid}`, data)
       .then((result) => {
         res.json(result.data);
       })
@@ -331,12 +406,14 @@ app.put("/OOTD/:userid", async (req, res) => {
 app.get("/OOTD/:userid", async (req, res) => {
   try {
     const userid = req.params.userid;
-    var data = {weather: req.body.weather, occasion : req.body.occasion, date : req.body.date}
+    var data = {
+      weather: req.body.weather,
+      occasion: req.body.occasion,
+      date: req.body.date,
+    };
     console.log(data);
     await axios
-      .put(
-        `http://localhost:5001/OOTD/?userid=${userid}`, data
-      )
+      .put(`http://localhost:5001/OOTD/?userid=${userid}`, data)
       .then((result) => {
         res.json(result.data);
       })
@@ -384,7 +461,8 @@ const dropcreateTable = async () => {
         WE_AVG_TMP BOOLEAN, \
         DIRTY BOOLEAN)";
 
-  var createOutfits = "CREATE TABLE Outfits (\
+  var createOutfits =
+    "CREATE TABLE Outfits (\
     OUTFIT_ID INT PRIMARY KEY,\
     HAT INT,\
     SHIRT INT,\
@@ -405,7 +483,7 @@ const dropcreateTable = async () => {
   // DROP wardrobe table if it currently exists
   await DBconn.query("DROP TABLE IF EXISTS wardrobe");
   await DBconn.query("DROP TABLE IF EXISTS Images");
-  await DBconn.query("DROP TABLE IF EXISTS Outfits")
+  await DBconn.query("DROP TABLE IF EXISTS Outfits");
   // Execute create table
   await DBconn.query(createWardrobe);
   await DBconn.query(createOutfits);
@@ -452,4 +530,3 @@ process.on("SIGINT", function () {
   console.log("App Successfully Shut Down");
   server.close();
 });
-
