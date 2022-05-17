@@ -165,24 +165,34 @@ app.get("/wardrobe", async (req, res) => {
 
 /**
  * Update a Wardrobe Item
+ * Path: /change/<userid>
  * 
+ * Desc:
+ * For a specified user and item, the app updates the corresponding entry in 
+ * the Outfits DB and the Python Models
+ * 
+ * Input:
+ *  - USERID
+ *  - In the request body, the item representation
+ * 
+ * Returns:
+ *  - None 
  */
 app.put("/change/:userid", async (req, res) => {
   try {
     const userid = req.params.userid;
     var data = req.body;
 
-    console.log(data)
+    console.log(data);
     // Create insert query
 
-    var query = "UPDATE wardrobe SET (color, type, times_worn, rating, oc_formal, oc_semi_formal, oc_casual, oc_workout, oc_outdoors, oc_comfy, we_cold, we_hot, we_rainy, we_snowy, we_avg_tmp, dirty) \
-      = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16) WHERE pieceid = $17";
+    var query =
+      "UPDATE wardrobe SET (color, type, oc_formal, oc_semi_formal, oc_casual, oc_workout, oc_outdoors, oc_comfy, we_cold, we_hot, we_rainy, we_snowy, we_avg_tmp, dirty, date_added) \
+      = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14, DEFAULT) WHERE pieceid = $15";
     // Setup query data
     var query_data = [
       data.COLOR,
       data.TYPE,
-      data.TIMES_WORN,
-      data.RATING,
       data.OC_FORMAL,
       data.OC_SEMI_FORMAL,
       data.OC_CASUAL,
@@ -195,7 +205,7 @@ app.put("/change/:userid", async (req, res) => {
       data.WE_SNOWY,
       data.WE_TYPICAL,
       data.DIRTY,
-      data.PIECEID
+      data.PIECEID,
     ];
 
     // Execute query
@@ -212,24 +222,25 @@ app.put("/change/:userid", async (req, res) => {
       });
     } catch (error) {}
 
-    // This might not be needed
-    res.json(add_newItem);
-    // Setup data to send back to python, same dict that was sent to SQL DB
+    query_data.unshift(query_data.pop());
+    query_data.splice(3, 0, null);
+    query_data.splice(3, 0, null);
     query_data.splice(3, 0, null);
 
+
     const py_ping = {
-      data: query_data,
-    };
+        data : query_data
+    }
     // // Execute put to python server with json dict
     // // to specify a specific userid http://localhost:5001/ping?userid=XXXX
-    // axios
-    //   .put(`http://localhost:5001/add?userid=${userid}`, py_ping)
-    //   .then((res) => {
-    //     // Output if not successful
-    //     if (res.data != 200) {
-    //       console.log("Error: Python Rejected Add");
-    //     }
-    //   });
+    axios
+      .post(`http://localhost:5001/change/?userid=${userid}`, py_ping)
+      .then((res) => {
+        // Output if not successful
+        if (res.data != 200) {
+          console.log("Error: Python Rejected Add");
+        }
+      });
   } catch (err) {
     console.error(err.message);
   }
@@ -383,6 +394,17 @@ app.put("/end_calibrate/:userid", async (req, res) => {
   }
 });
 
+/**
+ * Path:
+ * Sets the outfit of the day (OOTD) for the user
+ * 
+ * Inputs:
+ *  - USERID
+ *  - In the request body the outfit tuple, weather and occasion strings
+ * 
+ * Returns:
+ * None
+ */
 app.put("/OOTD/:userid", async (req, res) => {
   try {
     const userid = req.params.userid;
@@ -405,6 +427,20 @@ app.put("/OOTD/:userid", async (req, res) => {
   }
 });
 
+
+/**
+ * Path:
+ * Get the outfit of the day (OOTD) for the user given the weather and occasion
+ * 
+ * (Supports Date but Currently not implemented (default "" or today))
+ * 
+ * Inputs:
+ *  - USERID
+ *  - In the request body the weather and occasion strings
+ * 
+ * Returns:
+ * None
+ */
 app.get("/OOTD/:userid", async (req, res) => {
   try {
     const userid = req.params.userid;
