@@ -8,6 +8,7 @@ const axios = require("axios");
 const DBconn = require("./utils/connectDB.js");
 const sequelized = require("./utils/database.js");
 const { signup, login, authenticate } = require("./userauth/auth.js");
+//const { Sequelize } = require("sequelize/types");
 
 // Main Vars
 var port = 5000;
@@ -32,7 +33,7 @@ app.put("/startup/:userid/", async (req, res) => {
     const userid = req.params.userid;
 
     var query = "SELECT * FROM wardrobe ORDER BY pieceid DESC;";
-    var wardrobe = await DBconn.query(query).catch((err) => {
+    var wardrobe = await sequelized.query(query).catch((err) => {
       console.log(err);
     });
     // Sends wardrobe to app
@@ -93,7 +94,7 @@ app.post("/add/:userid/", async (req, res) => {
     ];
 
     // Execute query
-    const add_newItem = await DBconn.query(query, query_data).catch((err) => {
+    const add_newItem = await sequelized.query(query, {bind: query_data, raw: true}).catch((err) => {
       console.log(err);
     });
 
@@ -101,12 +102,13 @@ app.post("/add/:userid/", async (req, res) => {
     var image_data = [data.PIECEID, data.IMAGE];
 
     try {
-      await DBconn.query(add_image, image_data).catch((err) => {
+      await sequelized.query(add_image, {bind: image_data}).catch((err) => {
         console.log("CANNOT ADD IMAGE", err);
       });
     } catch (error) {}
 
     // This might not be needed
+    
     res.json(add_newItem);
     // Setup data to send back to python, same dict that was sent to SQL DB
     query_data.splice(3, 0, null);
@@ -143,20 +145,24 @@ Output
  */
 app.get("/wardrobe", async (req, res) => {
   try {
+    
     // query
-    var query = "SELECT * FROM Wardrobe ORDER BY pieceid DESC";
+    var query = "SELECT * FROM wardrobe ORDER BY pieceid DESC";
     var imgs = "SELECT * FROM images ORDER BY pieceid DESC";
     // Execute query
-    const wardrobe = await DBconn.query(query);
-    const images = await DBconn.query(imgs);
+    const wardrobe = await sequelized.query(query, {raw: true});
+    const images = await sequelized.query(imgs, {raw: true});
     // Send json of all rows
-
-    wardrobe.rows.map((element, index) => {
-      element.image = images.rows[index].image_encode;
+    
+  var good_wd = wardrobe[0] 
+  var good_img = images[0]
+  
+  good_wd.map((element, index) => {
+      element.image = good_img[index].image_encode;
       return element;
     });
-
-    await res.json(wardrobe.rows);
+    
+    await res.json(good_wd);
   } catch (err) {
     // Log errors
     console.error(err.message);
@@ -183,7 +189,6 @@ app.put("/change/:userid", async (req, res) => {
     const userid = req.params.userid;
     var data = req.body;
 
-    console.log(data);
     // Create insert query
 
     var query =
@@ -209,7 +214,7 @@ app.put("/change/:userid", async (req, res) => {
     ];
 
     // Execute query
-    const add_newItem = await DBconn.query(query, query_data).catch((err) => {
+    const add_newItem = await sequelized.query(query, {bind: query_data}).catch((err) => {
       console.log(err);
     });
 
@@ -217,7 +222,7 @@ app.put("/change/:userid", async (req, res) => {
     var image_data = [data.IMAGE, data.PIECEID];
 
     try {
-      await DBconn.query(add_image, image_data).catch((err) => {
+      await sequelized.query(add_image, {bind: image_data}).catch((err) => {
         console.log("CANNOT ADD IMAGE", err);
       });
     } catch (error) {}
@@ -262,31 +267,32 @@ Output
 app.post("/delete/:userid/:pieceid", async (req, res) => {
   // Get ID
   const id = req.params.pieceid;
-  console.log(id);
+ 
   try {
     // Delete query
     const del = `DELETE FROM Wardrobe WHERE PIECEID = $1`;
     const query_data = [id];
     //Execute SQL delete
-    const deletedItem = await DBconn.query(del, query_data);
+    const deletedItem = await sequelized.query(del, {bind: query_data});
 
     const delimg = "DELETE FROM Images WHERE PIECEID = $1";
-    await DBconn.query(delimg, query_data);
+    await sequelized.query(delimg, {bind: query_data});
 
-    const newDB = await DBconn.query(
+    const newDB = await sequelized.query(
       "SELECT * FROM Wardrobe ORDER BY pieceid DESC"
-    );
-
+    ,{raw: true});
+    var good_DB = newDB[0]
     var imgs = "SELECT * FROM images ORDER BY pieceid DESC";
-    const images = await DBconn.query(imgs);
+    const images = await sequelized.query(imgs);
+    var good_images = images[0]
     // Send json of all rows
 
-    newDB.rows.map((element, index) => {
-      element.image = images.rows[index].image_encode;
+    good_DB.map((element, index) => {
+      element.image = good_images[index].image_encode;
       return element;
     });
 
-    await res.json(newDB.rows);
+    await res.json(good_DB);
 
     const py_ping = {
       PK: id,
@@ -311,7 +317,7 @@ app.post("/delete/:userid/:pieceid", async (req, res) => {
 app.put("/recommender_train/:userid/", async (req, res) => {
   try {
     const userid = req.params.userid;
-    console.log(userid);
+    
     res.sendStatus(200);
     await axios
       .post(`http://localhost:5001/recommend_train/?userid=${userid}`)
@@ -381,7 +387,7 @@ app.put("/start_calibrate/:userid/:num_calibrate", async (req, res) => {
 // Calibrate End
 app.put("/end_calibrate/:userid", async (req, res) => {
   var data = { data: req.body };
-  console.log(data);
+  
   try {
     const userid = req.params.userid;
     const result = await axios.put(
@@ -413,7 +419,7 @@ app.put("/OOTD/:userid", async (req, res) => {
       weather: req.body.weather,
       occasion: req.body.occasion,
     };
-    console.log(data);
+    
     await axios
       .put(`http://localhost:5001/OOTD/?userid=${userid}`, data)
       .then((result) => {
@@ -519,13 +525,13 @@ const dropcreateTable = async () => {
   var image_table =
     "CREATE TABLE images ( pieceID INT PRIMARY KEY, IMAGE_ENCODE TEXT)";
   // DROP wardrobe table if it currently exists
-  await DBconn.query("DROP TABLE IF EXISTS wardrobe");
-  await DBconn.query("DROP TABLE IF EXISTS Images");
-  await DBconn.query("DROP TABLE IF EXISTS Outfits");
+  await sequelized.query("DROP TABLE IF EXISTS wardrobe");
+  await sequelized.query("DROP TABLE IF EXISTS Images");
+  await sequelized.query("DROP TABLE IF EXISTS Outfits");
   // Execute create table
-  await DBconn.query(createWardrobe);
-  await DBconn.query(createOutfits);
-  await DBconn.query(image_table);
+  await sequelized.query(createWardrobe);
+  await sequelized.query(createOutfits);
+  await sequelized.query(image_table);
   return true;
 };
 
