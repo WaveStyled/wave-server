@@ -8,6 +8,8 @@ const axios = require("axios");
 const DBconn = require("./utils/connectDB.js");
 const sequelized = require("./utils/database.js");
 const { signup, login, authenticate } = require("./userauth/auth.js");
+
+var users = ["123"];
 //const { Sequelize } = require("sequelize/types");
 
 // Main Vars
@@ -31,13 +33,21 @@ app.get("/users/private/auth", authenticate);
 app.put("/startup/:userid/", async (req, res) => {
   try {
     const userid = req.params.userid;
+    console.log(users, users.includes(userid));
+    if (!users.includes(userid)){
+      console.log("here");
+      newUser(userid).then((result) => {
+        console.log(`User ${userid} created`);
+      });
+      users.push(userid);
+    }
 
-    var query = "SELECT * FROM wardrobe ORDER BY pieceid DESC;";
-    var wardrobe = await sequelized.query(query).catch((err) => {
-      console.log(err);
-    });
-    // Sends wardrobe to app
-    res.json(wardrobe);
+    // var query = `SELECT * FROM wardrobe${userid} ORDER BY pieceid DESC;`;
+    // var wardrobe = await sequelized.query(query).catch((err) => {
+    //   console.log(err);
+    // });
+    // // Sends wardrobe to app
+    // res.json(wardrobe);
     // Sends ping to python
     axios.put(`http://localhost:5001/start/?userid=${userid}`).then((res) => {
       // Output if not successful
@@ -71,7 +81,7 @@ app.post("/add/:userid/", async (req, res) => {
     var data = req.body;
     // Create insert query
     var query =
-      "INSERT INTO wardrobe VALUES ($1,$2,$3,DEFAULT,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)";
+      `INSERT INTO wardrobe${userid} VALUES ($1,$2,$3,DEFAULT,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)`;
     // Setup query data
     var query_data = [
       data.PIECEID,
@@ -98,7 +108,7 @@ app.post("/add/:userid/", async (req, res) => {
       console.log(err);
     });
 
-    var add_image = "INSERT INTO Images VALUES ($1, $2)";
+    var add_image = `INSERT INTO Images${userid} VALUES ($1, $2)`;
     var image_data = [data.PIECEID, data.IMAGE];
 
     try {
@@ -143,12 +153,13 @@ Input
 Output
  - JSON dictionary of the wardrobe
  */
-app.get("/wardrobe", async (req, res) => {
+app.get("/wardrobe/:userid/", async (req, res) => {
   try {
-    
+    const userid = req.params.userid;
+
     // query
-    var query = "SELECT * FROM wardrobe ORDER BY pieceid DESC";
-    var imgs = "SELECT * FROM images ORDER BY pieceid DESC";
+    var query = `SELECT * FROM wardrobe${userid} ORDER BY pieceid DESC`;
+    var imgs = `SELECT * FROM images${userid} ORDER BY pieceid DESC`;
     // Execute query
     const wardrobe = await sequelized.query(query, {raw: true});
     const images = await sequelized.query(imgs, {raw: true});
@@ -192,8 +203,8 @@ app.put("/change/:userid", async (req, res) => {
     // Create insert query
 
     var query =
-      "UPDATE wardrobe SET (color, type, oc_formal, oc_semi_formal, oc_casual, oc_workout, oc_outdoors, oc_comfy, we_cold, we_hot, we_rainy, we_snowy, we_avg_tmp, dirty, date_added) \
-      = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14, DEFAULT) WHERE pieceid = $15";
+      `UPDATE wardrobe${userid} SET (color, type, oc_formal, oc_semi_formal, oc_casual, oc_workout, oc_outdoors, oc_comfy, we_cold, we_hot, we_rainy, we_snowy, we_avg_tmp, dirty, date_added) \
+      = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14, DEFAULT) WHERE pieceid = $15`;
     // Setup query data
     var query_data = [
       data.COLOR,
@@ -218,7 +229,7 @@ app.put("/change/:userid", async (req, res) => {
       console.log(err);
     });
 
-    var add_image = "UPDATE Images SET image_encode = $1 WHERE pieceid = $2";
+    var add_image = `UPDATE Images${userid} SET image_encode = $1 WHERE pieceid = $2`;
     var image_data = [data.IMAGE, data.PIECEID];
 
     try {
@@ -267,22 +278,23 @@ Output
 app.post("/delete/:userid/:pieceid", async (req, res) => {
   // Get ID
   const id = req.params.pieceid;
+  const uid = req.params.userid;
  
   try {
     // Delete query
-    const del = `DELETE FROM Wardrobe WHERE PIECEID = $1`;
+    const del = `DELETE FROM Wardrobe${uid} WHERE PIECEID = $1`;
     const query_data = [id];
     //Execute SQL delete
     const deletedItem = await sequelized.query(del, {bind: query_data});
 
-    const delimg = "DELETE FROM Images WHERE PIECEID = $1";
+    const delimg = `DELETE FROM Images${uid} WHERE PIECEID = $1`;
     await sequelized.query(delimg, {bind: query_data});
 
     const newDB = await sequelized.query(
-      "SELECT * FROM Wardrobe ORDER BY pieceid DESC"
+      `SELECT * FROM Wardrobe${uid} ORDER BY pieceid DESC`
     ,{raw: true});
     var good_DB = newDB[0]
-    var imgs = "SELECT * FROM images ORDER BY pieceid DESC";
+    var imgs = `SELECT * FROM images${uid} ORDER BY pieceid DESC`;
     const images = await sequelized.query(imgs);
     var good_images = images[0]
     // Send json of all rows
@@ -469,6 +481,55 @@ app.get("/OOTD/:userid", async (req, res) => {
   }
 });
 
+
+const newUser =  async (user) => {
+  var createWardrobe =
+  `CREATE TABLE wardrobe${user} ( \
+      pieceID INT PRIMARY KEY, \
+      COLOR VARCHAR(12), \
+      TYPE VARCHAR(5), \
+      DATE_ADDED TIMESTAMP DEFAULT Now(), \
+      TIMES_WORN INT, \
+      RATING NUMERIC(3,2) DEFAULT 0.50, \
+      OC_FORMAL BOOLEAN, \
+      OC_SEMI_FORMAL BOOLEAN, \
+      OC_CASUAL BOOLEAN, \
+      OC_WORKOUT BOOLEAN, \
+      OC_OUTDOORS BOOLEAN, \
+      OC_COMFY BOOLEAN, \
+      WE_COLD BOOLEAN, \
+      WE_HOT BOOLEAN, \
+      WE_RAINY BOOLEAN, \
+      WE_SNOWY BOOLEAN, \
+      WE_AVG_TMP BOOLEAN, \
+      DIRTY BOOLEAN)`;
+
+  var createOutfits =
+    `CREATE TABLE Outfits${user} (\
+    OUTFIT_ID INT PRIMARY KEY,\
+    HAT INT,\
+    SHIRT INT,\
+    SWEATER INT,\
+    JACKET INT,\
+    BOTTOM_LAYER INT,\
+    SHOES INT,\
+    MISC INT,\
+    TIMES_WORN INT DEFAULT 0,\
+    RECENT_DATE_WORN DATE,\
+    FIT_SCORE NUMERIC(3,2) DEFAULT 0.5,\
+    OCCASION INT,\
+    WEATHER INT,\
+    LIKED BOOLEAN\
+  )`;
+  var image_table =
+    `CREATE TABLE images${user} ( pieceID INT PRIMARY KEY, IMAGE_ENCODE TEXT)`;
+
+  await sequelized.query(createWardrobe);
+  await sequelized.query(createOutfits);
+  await sequelized.query(image_table);
+  return true;
+}
+
 // Testing functions
 
 /*
@@ -484,54 +545,18 @@ Output
  */
 const dropcreateTable = async () => {
   // Create table query
-  var createWardrobe =
-    "CREATE TABLE wardrobe ( \
-        pieceID INT PRIMARY KEY, \
-        COLOR VARCHAR(12), \
-        TYPE VARCHAR(5), \
-        DATE_ADDED TIMESTAMP DEFAULT Now(), \
-        TIMES_WORN INT, \
-        RATING NUMERIC(3,2) DEFAULT 0.50, \
-        OC_FORMAL BOOLEAN, \
-        OC_SEMI_FORMAL BOOLEAN, \
-        OC_CASUAL BOOLEAN, \
-        OC_WORKOUT BOOLEAN, \
-        OC_OUTDOORS BOOLEAN, \
-        OC_COMFY BOOLEAN, \
-        WE_COLD BOOLEAN, \
-        WE_HOT BOOLEAN, \
-        WE_RAINY BOOLEAN, \
-        WE_SNOWY BOOLEAN, \
-        WE_AVG_TMP BOOLEAN, \
-        DIRTY BOOLEAN)";
 
-  var createOutfits =
-    "CREATE TABLE Outfits (\
-    OUTFIT_ID INT PRIMARY KEY,\
-    HAT INT,\
-    SHIRT INT,\
-    SWEATER INT,\
-    JACKET INT,\
-    BOTTOM_LAYER INT,\
-    SHOES INT,\
-    MISC INT,\
-    TIMES_WORN INT DEFAULT 0,\
-    RECENT_DATE_WORN DATE,\
-    FIT_SCORE NUMERIC(3,2) DEFAULT 0.5,\
-    OCCASION INT,\
-    WEATHER INT,\
-    LIKED BOOLEAN\
-  )";
-  var image_table =
-    "CREATE TABLE images ( pieceID INT PRIMARY KEY, IMAGE_ENCODE TEXT)";
-  // DROP wardrobe table if it currently exists
-  await sequelized.query("DROP TABLE IF EXISTS wardrobe");
-  await sequelized.query("DROP TABLE IF EXISTS Images");
-  await sequelized.query("DROP TABLE IF EXISTS Outfits");
-  // Execute create table
-  await sequelized.query(createWardrobe);
-  await sequelized.query(createOutfits);
-  await sequelized.query(image_table);
+  await sequelized.query(`DROP TABLE IF EXISTS wardrobe`);
+  await sequelized.query(`DROP TABLE IF EXISTS Images`);
+  await sequelized.query(`DROP TABLE IF EXISTS Outfits`);
+
+  users.forEach(function(user) {
+    sequelized.query(`DROP TABLE IF EXISTS wardrobe${user}`);
+    sequelized.query(`DROP TABLE IF EXISTS Images${user}`);
+    sequelized.query(`DROP TABLE IF EXISTS Outfits${user}`);
+  });
+
+  await newUser(123);
   return true;
 };
 
