@@ -9,7 +9,7 @@ const DBconn = require("./utils/connectDB.js");
 const sequelized = require("./utils/database.js");
 const { signup, login, authenticate } = require("./userauth/auth.js");
 
-var users = ["123"];
+var users = [];
 //const { Sequelize } = require("sequelize/types");
 
 // Main Vars
@@ -33,9 +33,9 @@ app.get("/users/private/auth", authenticate);
 app.put("/startup/:userid/", async (req, res) => {
   try {
     const userid = req.params.userid;
+    console.log(userid)
     console.log(users, users.includes(userid));
     if (!users.includes(userid)){
-      console.log("here");
       newUser(userid).then((result) => {
         console.log(`User ${userid} created`);
       });
@@ -81,7 +81,7 @@ app.post("/add/:userid/", async (req, res) => {
     var data = req.body;
     // Create insert query
     var query =
-      `INSERT INTO wardrobe${userid} VALUES ($1,$2,$3,DEFAULT,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)`;
+      `INSERT INTO wardrobe_${userid} VALUES ($1,$2,$3,DEFAULT,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)`;
     // Setup query data
     var query_data = [
       data.PIECEID,
@@ -108,7 +108,7 @@ app.post("/add/:userid/", async (req, res) => {
       console.log(err);
     });
 
-    var add_image = `INSERT INTO Images${userid} VALUES ($1, $2)`;
+    var add_image = `INSERT INTO Images_${userid} VALUES ($1, $2)`;
     var image_data = [data.PIECEID, data.IMAGE];
 
     try {
@@ -158,8 +158,8 @@ app.get("/wardrobe/:userid/", async (req, res) => {
     const userid = req.params.userid;
 
     // query
-    var query = `SELECT * FROM wardrobe${userid} ORDER BY pieceid DESC`;
-    var imgs = `SELECT * FROM images${userid} ORDER BY pieceid DESC`;
+    var query = `SELECT * FROM wardrobe_${userid} ORDER BY pieceid DESC`;
+    var imgs = `SELECT * FROM images_${userid} ORDER BY pieceid DESC`;
     // Execute query
     const wardrobe = await sequelized.query(query, {raw: true});
     const images = await sequelized.query(imgs, {raw: true});
@@ -203,7 +203,7 @@ app.put("/change/:userid", async (req, res) => {
     // Create insert query
 
     var query =
-      `UPDATE wardrobe${userid} SET (color, type, oc_formal, oc_semi_formal, oc_casual, oc_workout, oc_outdoors, oc_comfy, we_cold, we_hot, we_rainy, we_snowy, we_avg_tmp, dirty, date_added) \
+      `UPDATE wardrobe_${userid} SET (color, type, oc_formal, oc_semi_formal, oc_casual, oc_workout, oc_outdoors, oc_comfy, we_cold, we_hot, we_rainy, we_snowy, we_avg_tmp, dirty, date_added) \
       = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14, DEFAULT) WHERE pieceid = $15`;
     // Setup query data
     var query_data = [
@@ -229,7 +229,7 @@ app.put("/change/:userid", async (req, res) => {
       console.log(err);
     });
 
-    var add_image = `UPDATE Images${userid} SET image_encode = $1 WHERE pieceid = $2`;
+    var add_image = `UPDATE Images_${userid} SET image_encode = $1 WHERE pieceid = $2`;
     var image_data = [data.IMAGE, data.PIECEID];
 
     try {
@@ -282,19 +282,19 @@ app.post("/delete/:userid/:pieceid", async (req, res) => {
  
   try {
     // Delete query
-    const del = `DELETE FROM Wardrobe${uid} WHERE PIECEID = $1`;
+    const del = `DELETE FROM Wardrobe_${uid} WHERE PIECEID = $1`;
     const query_data = [id];
     //Execute SQL delete
     const deletedItem = await sequelized.query(del, {bind: query_data});
 
-    const delimg = `DELETE FROM Images${uid} WHERE PIECEID = $1`;
+    const delimg = `DELETE FROM Images_${uid} WHERE PIECEID = $1`;
     await sequelized.query(delimg, {bind: query_data});
 
     const newDB = await sequelized.query(
-      `SELECT * FROM Wardrobe${uid} ORDER BY pieceid DESC`
+      `SELECT * FROM Wardrobe_${uid} ORDER BY pieceid DESC`
     ,{raw: true});
     var good_DB = newDB[0]
-    var imgs = `SELECT * FROM images${uid} ORDER BY pieceid DESC`;
+    var imgs = `SELECT * FROM images_${uid} ORDER BY pieceid DESC`;
     const images = await sequelized.query(imgs);
     var good_images = images[0]
     // Send json of all rows
@@ -482,9 +482,10 @@ app.get("/OOTD/:userid", async (req, res) => {
 });
 
 
-const newUser =  async (user) => {
+async function newUser (user) {
+  console.log("TABLE USER: ", user)
   var createWardrobe =
-  `CREATE TABLE wardrobe${user} ( \
+  `CREATE TABLE wardrobe_${user} ( \
       pieceID INT PRIMARY KEY, \
       COLOR VARCHAR(12), \
       TYPE VARCHAR(5), \
@@ -505,7 +506,7 @@ const newUser =  async (user) => {
       DIRTY BOOLEAN)`;
 
   var createOutfits =
-    `CREATE TABLE Outfits${user} (\
+    `CREATE TABLE Outfits_${user} (\
     OUTFIT_ID INT PRIMARY KEY,\
     HAT INT,\
     SHIRT INT,\
@@ -522,7 +523,7 @@ const newUser =  async (user) => {
     LIKED BOOLEAN\
   )`;
   var image_table =
-    `CREATE TABLE images${user} ( pieceID INT PRIMARY KEY, IMAGE_ENCODE TEXT)`;
+    `CREATE TABLE images_${user} ( pieceID INT PRIMARY KEY, IMAGE_ENCODE TEXT)`;
 
   await sequelized.query(createWardrobe);
   await sequelized.query(createOutfits);
@@ -545,18 +546,13 @@ Output
  */
 const dropcreateTable = async () => {
   // Create table query
-
-  await sequelized.query(`DROP TABLE IF EXISTS wardrobe`);
-  await sequelized.query(`DROP TABLE IF EXISTS Images`);
-  await sequelized.query(`DROP TABLE IF EXISTS Outfits`);
-
   users.forEach(function(user) {
-    sequelized.query(`DROP TABLE IF EXISTS wardrobe${user}`);
-    sequelized.query(`DROP TABLE IF EXISTS Images${user}`);
-    sequelized.query(`DROP TABLE IF EXISTS Outfits${user}`);
+    sequelized.query(`DROP TABLE IF EXISTS wardrobe_${user}`);
+    sequelized.query(`DROP TABLE IF EXISTS Images_${user}`);
+    sequelized.query(`DROP TABLE IF EXISTS Outfits_${user}`);
   });
 
-  await newUser(123);
+  // await newUser(123);
   return true;
 };
 
