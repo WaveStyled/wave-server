@@ -3,6 +3,8 @@ import requests
 import pandas as pd 
 from datetime import date
 
+## matt@gmail.com
+## matthew
 
 today = date.today()
 # mm/dd/y
@@ -10,7 +12,7 @@ d3 = today.strftime("%m/%d/%y")
 
 data = pd.read_csv('../../wave-recommender/csv_files/good_matts_wardrobe.csv') 
 images = pd.read_csv("./images.csv")
-url = "http://localhost:5000/add/123"
+url = "http://localhost:5000/add/RG8ONR0p9ZSUuWqGQZ3YIgSluKx1"
 
 i = 0
 for row in data.itertuples(index=False):
