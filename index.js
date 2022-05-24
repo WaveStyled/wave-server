@@ -462,14 +462,14 @@ app.put("/OOTD/:userid", async (req, res) => {
 app.get("/OOTD/:userid", async (req, res) => {
   try {
     const userid = req.params.userid;
-    var data = {
-      weather: req.body.weather,
-      occasion: req.body.occasion,
-      date: req.body.date,
-    };
-    console.log(data);
+    // var data = {
+    //   weather: req.body.weather,
+    //   occasion: req.body.occasion,
+    //   date: req.body.date,
+    // };
+    //console.log(data);
     await axios
-      .get(`http://localhost:5001/OOTD/?userid=${userid}`, data)
+      .get(`http://localhost:5001/OOTD/?userid=${userid}`)
       .then((result) => {
         res.json(result.data);
       })
@@ -548,8 +548,8 @@ const dropcreateTable = async () => {
   // Create table query
   users.forEach(function(user) {
     sequelized.query(`DROP TABLE IF EXISTS wardrobe_${user}`);
-    sequelized.query(`DROP TABLE IF EXISTS Images_${user}`);
-    sequelized.query(`DROP TABLE IF EXISTS Outfits_${user}`);
+    sequelized.query(`DROP TABLE IF EXISTS images_${user}`);
+    sequelized.query(`DROP TABLE IF EXISTS outfits_${user}`);
   });
 
   // await newUser(123);
@@ -567,13 +567,13 @@ var server = app.listen(port, () => {
 
   console.log("Resetting the database...");
   // Reset the table
-  dropcreateTable().then((result) => {
-    if (result) {
-      console.log("Database has been reset");
-    } else {
-      console.log(result);
-    }
-  });
+  // dropcreateTable().then((result) => {
+  //   if (result) {
+  //     console.log("Database has been reset");
+  //   } else {
+  //     console.log(result);
+  //   }
+  // });
 });
 
 /*
