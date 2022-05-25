@@ -7,7 +7,6 @@ const axios = require("axios");
 // File Imports
 const DBconn = require("./utils/connectDB.js");
 const sequelized = require("./utils/database.js");
-const { signup, login, authenticate } = require("./userauth/auth.js");
 
 var users = [];
 //const { Sequelize } = require("sequelize/types");
@@ -25,29 +24,29 @@ sequelized
     console.log(`Database & tables created!`);
   });
 
-app.post("/users/signup", signup);
-app.post("/users/login", login);
-app.get("/users/private/auth", authenticate);
-
 // Startup path
+/**
+ *  Path: /startup
+ *
+ *  Desc: Invoked each time the app is started. Creates a new user in the
+ *  database if not existent
+ *
+ *  Input: userid : query parameter that is the user invoking it
+ *
+ *  Returns: None
+ */
 app.put("/startup/:userid/", async (req, res) => {
   try {
     const userid = req.params.userid;
-    console.log(userid)
+    console.log(userid);
     console.log(users, users.includes(userid));
-    if (!users.includes(userid)){
+    if (!users.includes(userid)) {
       newUser(userid).then((result) => {
         console.log(`User ${userid} created`);
       });
       users.push(userid);
     }
 
-    // var query = `SELECT * FROM wardrobe${userid} ORDER BY pieceid DESC;`;
-    // var wardrobe = await sequelized.query(query).catch((err) => {
-    //   console.log(err);
-    // });
-    // // Sends wardrobe to app
-    // res.json(wardrobe);
     // Sends ping to python
     axios.put(`http://localhost:5001/start/?userid=${userid}`).then((res) => {
       // Output if not successful
@@ -80,8 +79,7 @@ app.post("/add/:userid/", async (req, res) => {
     const userid = req.params.userid;
     var data = req.body;
     // Create insert query
-    var query =
-      `INSERT INTO wardrobe_${userid} VALUES ($1,$2,$3,DEFAULT,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)`;
+    var query = `INSERT INTO wardrobe_${userid} VALUES ($1,$2,$3,DEFAULT,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)`;
     // Setup query data
     var query_data = [
       data.PIECEID,
@@ -104,21 +102,23 @@ app.post("/add/:userid/", async (req, res) => {
     ];
 
     // Execute query
-    const add_newItem = await sequelized.query(query, {bind: query_data, raw: true}).catch((err) => {
-      console.log(err);
-    });
+    const add_newItem = await sequelized
+      .query(query, { bind: query_data, raw: true })
+      .catch((err) => {
+        console.log(err);
+      });
 
     var add_image = `INSERT INTO Images_${userid} VALUES ($1, $2)`;
     var image_data = [data.PIECEID, data.IMAGE];
 
     try {
-      await sequelized.query(add_image, {bind: image_data}).catch((err) => {
+      await sequelized.query(add_image, { bind: image_data }).catch((err) => {
         console.log("CANNOT ADD IMAGE", err);
       });
     } catch (error) {}
 
     // This might not be needed
-    
+
     res.json(add_newItem);
     // Setup data to send back to python, same dict that was sent to SQL DB
     query_data.splice(3, 0, null);
@@ -127,7 +127,6 @@ app.post("/add/:userid/", async (req, res) => {
       data: query_data,
     };
     // Execute put to python server with json dict
-    // to specify a specific userid http://localhost:5001/ping?userid=XXXX
     axios
       .put(`http://localhost:5001/add?userid=${userid}`, py_ping)
       .then((res) => {
@@ -137,7 +136,6 @@ app.post("/add/:userid/", async (req, res) => {
         }
       });
   } catch (err) {
-    // move this u idiot - matt talking to matt
     console.error(err.message);
   }
 });
@@ -161,18 +159,18 @@ app.get("/wardrobe/:userid/", async (req, res) => {
     var query = `SELECT * FROM wardrobe_${userid} ORDER BY pieceid DESC`;
     var imgs = `SELECT * FROM images_${userid} ORDER BY pieceid DESC`;
     // Execute query
-    const wardrobe = await sequelized.query(query, {raw: true});
-    const images = await sequelized.query(imgs, {raw: true});
+    const wardrobe = await sequelized.query(query, { raw: true });
+    const images = await sequelized.query(imgs, { raw: true });
     // Send json of all rows
-    
-  var good_wd = wardrobe[0] 
-  var good_img = images[0]
-  
-  good_wd.map((element, index) => {
+
+    var good_wd = wardrobe[0];
+    var good_img = images[0];
+
+    good_wd.map((element, index) => {
       element.image = good_img[index].image_encode;
       return element;
     });
-    
+
     await res.json(good_wd);
   } catch (err) {
     // Log errors
@@ -183,17 +181,17 @@ app.get("/wardrobe/:userid/", async (req, res) => {
 /**
  * Update a Wardrobe Item
  * Path: /change/<userid>
- * 
+ *
  * Desc:
- * For a specified user and item, the app updates the corresponding entry in 
+ * For a specified user and item, the app updates the corresponding entry in
  * the Outfits DB and the Python Models
- * 
+ *
  * Input:
  *  - USERID
  *  - In the request body, the item representation
- * 
+ *
  * Returns:
- *  - None 
+ *  - None
  */
 app.put("/change/:userid", async (req, res) => {
   try {
@@ -202,8 +200,7 @@ app.put("/change/:userid", async (req, res) => {
 
     // Create insert query
 
-    var query =
-      `UPDATE wardrobe_${userid} SET (color, type, oc_formal, oc_semi_formal, oc_casual, oc_workout, oc_outdoors, oc_comfy, we_cold, we_hot, we_rainy, we_snowy, we_avg_tmp, dirty, date_added) \
+    var query = `UPDATE wardrobe_${userid} SET (color, type, oc_formal, oc_semi_formal, oc_casual, oc_workout, oc_outdoors, oc_comfy, we_cold, we_hot, we_rainy, we_snowy, we_avg_tmp, dirty, date_added) \
       = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14, DEFAULT) WHERE pieceid = $15`;
     // Setup query data
     var query_data = [
@@ -225,30 +222,32 @@ app.put("/change/:userid", async (req, res) => {
     ];
 
     // Execute query
-    const add_newItem = await sequelized.query(query, {bind: query_data}).catch((err) => {
-      console.log(err);
-    });
+    const add_newItem = await sequelized
+      .query(query, { bind: query_data })
+      .catch((err) => {
+        console.log(err);
+      });
 
     var add_image = `UPDATE Images_${userid} SET image_encode = $1 WHERE pieceid = $2`;
     var image_data = [data.IMAGE, data.PIECEID];
 
     try {
-      await sequelized.query(add_image, {bind: image_data}).catch((err) => {
+      await sequelized.query(add_image, { bind: image_data }).catch((err) => {
         console.log("CANNOT ADD IMAGE", err);
       });
     } catch (error) {}
 
+    // remove the image from the dict, add recent-date times worn, rating parameters
+    // to the python body
     query_data.unshift(query_data.pop());
     query_data.splice(3, 0, null);
     query_data.splice(3, 0, null);
     query_data.splice(3, 0, null);
 
-
     const py_ping = {
-        data : query_data
-    }
+      data: query_data,
+    };
     // // Execute put to python server with json dict
-    // // to specify a specific userid http://localhost:5001/ping?userid=XXXX
     axios
       .post(`http://localhost:5001/change/?userid=${userid}`, py_ping)
       .then((res) => {
@@ -271,7 +270,7 @@ then it contacts python server to remove it from the wardrobe object
 
 Input
  - Piece ID
- - To python server: user id - NOT IMPLEMENTED
+ - To python server: user id
 Output
  - NONE
  */
@@ -279,26 +278,28 @@ app.post("/delete/:userid/:pieceid", async (req, res) => {
   // Get ID
   const id = req.params.pieceid;
   const uid = req.params.userid;
- 
+
   try {
     // Delete query
     const del = `DELETE FROM Wardrobe_${uid} WHERE PIECEID = $1`;
     const query_data = [id];
     //Execute SQL delete
-    const deletedItem = await sequelized.query(del, {bind: query_data});
+    const deletedItem = await sequelized.query(del, { bind: query_data });
 
     const delimg = `DELETE FROM Images_${uid} WHERE PIECEID = $1`;
-    await sequelized.query(delimg, {bind: query_data});
+    await sequelized.query(delimg, { bind: query_data });
 
     const newDB = await sequelized.query(
-      `SELECT * FROM Wardrobe_${uid} ORDER BY pieceid DESC`
-    ,{raw: true});
-    var good_DB = newDB[0]
+      `SELECT * FROM Wardrobe_${uid} ORDER BY pieceid DESC`,
+      { raw: true }
+    );
+
+    var good_DB = newDB[0];
     var imgs = `SELECT * FROM images_${uid} ORDER BY pieceid DESC`;
     const images = await sequelized.query(imgs);
-    var good_images = images[0]
-    // Send json of all rows
+    var good_images = images[0];
 
+    // Send json of all rows with the images appended to the JSON to be displayed
     good_DB.map((element, index) => {
       element.image = good_images[index].image_encode;
       return element;
@@ -306,9 +307,6 @@ app.post("/delete/:userid/:pieceid", async (req, res) => {
 
     await res.json(good_DB);
 
-    const py_ping = {
-      PK: id,
-    };
     // Ping python with Piece ID
     axios
       .delete(
@@ -326,10 +324,22 @@ app.post("/delete/:userid/:pieceid", async (req, res) => {
 });
 
 // Recommender Train path
+/*
+Path: /recommender/:userid
+
+Desc:
+App contacts endpoint to train the recommendation model on the Python side
+so recommendations can be made
+
+Input
+ - To python server: user id
+Output
+ - NONE
+ */
 app.put("/recommender_train/:userid/", async (req, res) => {
   try {
     const userid = req.params.userid;
-    
+
     res.sendStatus(200);
     await axios
       .post(`http://localhost:5001/recommend_train/?userid=${userid}`)
@@ -349,6 +359,22 @@ app.put("/recommender_train/:userid/", async (req, res) => {
 });
 
 // Recommender Train path
+/**
+Path: /recommend/:userid/:occasion/:weather
+
+Desc:
+App contacts endpoint to get outfit recommendations given the weather and
+occasion. Gives at most 7 recommendations at once. returns the empty list 
+if none can be given
+
+Input
+ - Piece ID
+ - To python server: user id 
+ - weather - weather string to be inputted
+ - occasion - occasion string to be inputted
+Output
+ - Array[Array[]] -- array of outfits (7-elements) that the model recommends
+ */
 app.put("/recommend/:userid/:occasion/:weather/", async (req, res) => {
   try {
     const userid = req.params.userid;
@@ -377,6 +403,19 @@ app.put("/recommend/:userid/:occasion/:weather/", async (req, res) => {
 });
 
 // Calibrate Start
+/**
+Path: /start_calibrate/:userid/:num_calibrate
+
+Desc:
+App contacts endpoint to get initial calibrations for the model
+to learn the user's preferences
+
+Input
+ - To python server: user id 
+ - num calibrate --> number (upper bound) of fits to be given
+Output
+ - Array[Array[]] -- array of outfits (7-elements) that model randomly generates
+ */
 app.put("/start_calibrate/:userid/:num_calibrate", async (req, res) => {
   try {
     const userid = req.params.userid;
@@ -397,9 +436,22 @@ app.put("/start_calibrate/:userid/:num_calibrate", async (req, res) => {
 });
 
 // Calibrate End
+/**
+Path: /end_calibrate/:userid/
+
+Desc:
+App contacts endpoint to give the ratings for the calibrated outfits
+to be used for training
+
+Input
+ - To python server: user id 
+
+Output
+ - Array[Array[]] -- array of outfits (7-elements) that model randomly generates
+ */
 app.put("/end_calibrate/:userid", async (req, res) => {
   var data = { data: req.body };
-  
+
   try {
     const userid = req.params.userid;
     const result = await axios.put(
@@ -415,11 +467,11 @@ app.put("/end_calibrate/:userid", async (req, res) => {
 /**
  * Path:
  * Sets the outfit of the day (OOTD) for the user
- * 
+ *
  * Inputs:
  *  - USERID
  *  - In the request body the outfit tuple, weather and occasion strings
- * 
+ *
  * Returns:
  * None
  */
@@ -431,7 +483,7 @@ app.put("/OOTD/:userid", async (req, res) => {
       weather: req.body.weather,
       occasion: req.body.occasion,
     };
-    
+
     await axios
       .put(`http://localhost:5001/OOTD/?userid=${userid}`, data)
       .then((result) => {
@@ -445,17 +497,16 @@ app.put("/OOTD/:userid", async (req, res) => {
   }
 });
 
-
 /**
  * Path:
  * Get the outfit of the day (OOTD) for the user given the weather and occasion
- * 
+ *
  * (Supports Date but Currently not implemented (default "" or today))
- * 
+ *
  * Inputs:
  *  - USERID
  *  - In the request body the weather and occasion strings
- * 
+ *
  * Returns:
  * None
  */
@@ -481,11 +532,9 @@ app.get("/OOTD/:userid", async (req, res) => {
   }
 });
 
-
-async function newUser (user) {
-  console.log("TABLE USER: ", user)
-  var createWardrobe =
-  `CREATE TABLE wardrobe_${user} ( \
+async function newUser(user) {
+  console.log("TABLE USER: ", user);
+  var createWardrobe = `CREATE TABLE wardrobe_${user} ( \
       pieceID INT PRIMARY KEY, \
       COLOR VARCHAR(12), \
       TYPE VARCHAR(5), \
@@ -505,8 +554,7 @@ async function newUser (user) {
       WE_AVG_TMP BOOLEAN, \
       DIRTY BOOLEAN)`;
 
-  var createOutfits =
-    `CREATE TABLE Outfits_${user} (\
+  var createOutfits = `CREATE TABLE Outfits_${user} (\
     OUTFIT_ID INT PRIMARY KEY,\
     HAT INT,\
     SHIRT INT,\
@@ -522,8 +570,7 @@ async function newUser (user) {
     WEATHER INT,\
     LIKED BOOLEAN\
   )`;
-  var image_table =
-    `CREATE TABLE images_${user} ( pieceID INT PRIMARY KEY, IMAGE_ENCODE TEXT)`;
+  var image_table = `CREATE TABLE images_${user} ( pieceID INT PRIMARY KEY, IMAGE_ENCODE TEXT)`;
 
   await sequelized.query(createWardrobe);
   await sequelized.query(createOutfits);
@@ -532,7 +579,6 @@ async function newUser (user) {
 }
 
 // Testing functions
-
 /*
 Function: dropCreateTable
 
@@ -546,7 +592,7 @@ Output
  */
 const dropcreateTable = async () => {
   // Create table query
-  users.forEach(function(user) {
+  users.forEach(function (user) {
     sequelized.query(`DROP TABLE IF EXISTS wardrobe_${user}`);
     sequelized.query(`DROP TABLE IF EXISTS images_${user}`);
     sequelized.query(`DROP TABLE IF EXISTS outfits_${user}`);

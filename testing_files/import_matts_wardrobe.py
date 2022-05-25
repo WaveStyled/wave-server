@@ -1,15 +1,24 @@
+###########
+#
+# Loads a wardrobe to the database to be used for testing and preloading
+# for a specific account
+# 
+# INSTALL: python3 -m pip install requests
+#          python3 -m pip install pandas
+###########
 import requests
 
 import pandas as pd 
 from datetime import date
 
-## matt@gmail.com
-## matthew
+## matt@gmail.com --> test log in
+## matthew        --> test password
 
 today = date.today()
 # mm/dd/y
 d3 = today.strftime("%m/%d/%y")
 
+# sends the information to the node, which then updates the PSQL and python
 data = pd.read_csv('../../wave-recommender/csv_files/good_matts_wardrobe.csv') 
 images = pd.read_csv("./images.csv")
 url = "http://localhost:5000/add/RG8ONR0p9ZSUuWqGQZ3YIgSluKx1"

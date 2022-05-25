@@ -1,3 +1,8 @@
+######
+#
+# Helper file to convert HEIC (iPhone default image) to JPEG
+#
+######
 from PIL import Image
 import pillow_heif
 
