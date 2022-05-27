@@ -5,7 +5,6 @@ var cors = require("cors");
 const axios = require("axios");
 
 // File Imports
-const DBconn = require("./utils/connectDB.js");
 const sequelized = require("./utils/database.js");
 const { signup, login, authenticate } = require("./userauth/auth.js");
 
@@ -591,7 +590,6 @@ process.on("SIGINT", function () {
     "\nShutting Main Server Down and Closing Database Connections..."
   );
   console.log("Http server closed.");
-  DBconn.end();
   console.log("App Successfully Shut Down");
   server.close();
 });
