@@ -1,3 +1,8 @@
+/**
+ * Describes all Database connections that the Node uses on runtime
+ * 
+ */
+
 const Sequelize = require('sequelize');
 
 const user = 'postgres'

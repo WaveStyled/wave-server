@@ -1,3 +1,11 @@
+/**
+ * INDEX.JS
+ * 
+ * Runs the Middleware server and bridges the frontend with the 
+ * backend. Connects the App to the PSQL Database
+ * 
+ */
+
 // Library Imports
 var express = require("express");
 var app = express();
@@ -7,7 +15,7 @@ const axios = require("axios");
 // File Imports
 const sequelized = require("./utils/database.js");
 
-var users = ['RG8ONR0p9ZSUuWqGQZ3YIgSluKx1'];
+var users = [];
 //const { Sequelize } = require("sequelize/types");
 
 // Main Vars
@@ -612,14 +620,6 @@ var server = app.listen(port, () => {
   console.log("Server has started on port: " + port);
 
   console.log("Resetting the database...");
-  // Reset the table
-  // dropcreateTable().then((result) => {
-  //   if (result) {
-  //     console.log("Database has been reset");
-  //   } else {
-  //     console.log(result);
-  //   }
-  // });
 });
 
 /*
