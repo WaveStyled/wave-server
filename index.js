@@ -7,7 +7,7 @@ const axios = require("axios");
 // File Imports
 const sequelized = require("./utils/database.js");
 
-var users = [];
+var users = ['RG8ONR0p9ZSUuWqGQZ3YIgSluKx1'];
 //const { Sequelize } = require("sequelize/types");
 
 // Main Vars
@@ -146,7 +146,7 @@ Desc:
 App contacts endpoint to get the entire wardrobe from database. Node sends the wardrobe back to the app
 
 Input
- - USER ID : NOT IMPLEMENTED
+ - USER ID
 Output
  - JSON dictionary of the wardrobe
  */
@@ -521,6 +521,7 @@ app.get("/OOTD/:userid", async (req, res) => {
     await axios
       .get(`http://localhost:5001/OOTD/?userid=${userid}`)
       .then((result) => {
+        console.log(result.data)
         res.json(result.data);
       })
       .catch((error) => {

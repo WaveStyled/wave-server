@@ -1,3 +1,10 @@
+"""
+Tests user authentication and Log In using bcrypt
+
+Now DEPRECATED as we have switched to Firebase for authentication
+
+"""
+
 import requests
 
 if __name__ == '__main__':
