@@ -1,5 +1,7 @@
 # wave-server
 
+Runs the middleware server that bridges the frontend with the Python backend and the PSQL Database
+
 ## How to execute the Service
 
 1. Open 3 terminals
